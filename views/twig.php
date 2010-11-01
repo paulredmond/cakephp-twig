@@ -41,7 +41,7 @@ class TwigView extends View {
 	}
 	
 	public function _render($action, $params, $loadHelpers = true, $cached = false) {
-		if (1==2&& pathinfo( $action, PATHINFO_EXTENSION ) == 'ctp' ) {
+		if ( pathinfo( $action, PATHINFO_EXTENSION ) == 'ctp' ) {
 			return parent::_render( $action, $params, $loadHelpers, $cached );
 		}
 		
