@@ -41,7 +41,7 @@ class TwigView extends View {
 	}
 	
 	public function _render($action, $params, $loadHelpers = true, $cached = false) {
-		if ( pathinfo( $action, PATHINFO_EXTENSION ) == 'ctp' ) {
+		if (pathinfo( $action, PATHINFO_EXTENSION ) == 'ctp' ) {
 			return parent::_render( $action, $params, $loadHelpers, $cached );
 		}
 		
@@ -57,12 +57,12 @@ class TwigView extends View {
 		
 		$template = $this->TwigEnv->loadTemplate($file);
 		$this->debug = true;
-		$this->timerStart($file);
+		$timeStart = getMicrotime();
 		$out = $template->render( $params );
-		$time = $this->timerStop($file);
 		
 		if ( $this->debug == true ) {
-			$out = $out . "\n<!-- Rendered {$file} in {$time} -->";
+			$out = $out . "\n<!-- Twig rendered {$file} in " . round(getMicrotime() - $timeStart, 4) . "s -->";
+			$out = $out . "\n<!-- Path: {$action} -->\n";
 		}
 		
 		return $out;
@@ -80,23 +80,6 @@ class TwigView extends View {
 		}
 		return array();
 	}
-	
-	function timerStart($k) 
-    { 
-        $time = microtime(); 
-        $time = explode(' ', $time); 
-        $time = $time[1] + $time[0]; 
-        $this->running_timers[$k] = $time; 
-    } 
-
-    function timerStop($k) 
-    { 
-        $time = microtime(); 
-        $time = explode(" ", $time); 
-        $time = $time[1] + $time[0]; 
-        $endtime = $time; 
-        return ($endtime - $this->running_timers[$k]); 
-    }
 	
 	/**
 	 * Makes sure that temp folders are set up for twig.
