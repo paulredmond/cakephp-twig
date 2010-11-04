@@ -2,6 +2,10 @@
 
 App::import('Vendor', 'Twig.Twig/Autoloader');
 
+if ( ! defined( 'TWIG_CACHE_PATH' ) ) {
+	define( 'TWIG_CACHE_PATH', TMP . 'twig' . DS .  'cache' );
+}
+
 /**
  * TwigView class for Cakephp.
  */
@@ -12,6 +16,7 @@ class TwigView extends View {
 	$cacheName = 'cache',
 	$debug = false,
 	$tmpPath,
+	$error_view_path,
 	$cachePath,
 	$TwigLoader,
 	$TwigEnv;
@@ -23,13 +28,15 @@ class TwigView extends View {
 		parent::__construct($controller, $register);
 		
 		Twig_Autoloader::register();
-		$this->tmpFolderSetup();
+		
+		$this->debug = (boolean) Configure::read('debug');
 		
 		// Set up the Twig environment instance.
-		$this->TwigLoader = new Twig_Loader_Filesystem(VIEWS); // Have to load a path. Not really useful yet.
+		$this->TwigLoader = new Twig_Loader_Filesystem( VIEWS ); # Have to load a path. Not really useful yet.
 		$this->TwigEnv = new Twig_Environment( $this->TwigLoader, array(
-			'cache' => Configure::read('Cache.disable') == true ? false : $this->cachePath,
-			'debug' => $this->debug
+			'cache' => Configure::read('Cache.disable') == true ? false : TWIG_CACHE_PATH,
+			'debug' => $this->debug,
+			'auto_reload' => $this->debug
 		));
 		
 		$this->ext = self::DEFAULT_EXTENSION;
@@ -45,58 +52,83 @@ class TwigView extends View {
 			return parent::_render( $action, $params, $loadHelpers, $cached );
 		}
 		
+		# Set the twig path to the current filename path.
 		list($file, $dir) = array( basename( $action ), dirname( $action ) );
 		$this->TwigLoader->setPaths( $dir );
 
-		if ( $loadHelpers == true) {
-			$helpers = $this->loadHelpers();
-			$params = array_merge( $params, $helpers);
-		}
-		
-		$params['this'] = $this;
-		
-		$template = $this->TwigEnv->loadTemplate($file);
-		$this->debug = true;
-		$timeStart = getMicrotime();
-		$out = $template->render( $params );
-		
-		if ( $this->debug == true ) {
-			$out = $out . "\n<!-- Twig rendered {$file} in " . round(getMicrotime() - $timeStart, 4) . "s -->";
-			$out = $out . "\n<!-- Path: {$action} -->\n";
-		}
-		
-		return $out;
-	}
-	
-	private function loadHelpers() {
-		$helpers = array();
-		if ( $this->helpers != false ) {
-			$helpers = $this->_loadHelpers( $helpers, $this->helpers );
-			foreach( $helpers as $var => $obj ) {
-				$varName = Inflector::variable( $var );
-				$this->loaded[$varName] = $obj;
+		# Set up helpers.
+		$loadedHelpers = array();
+		if ($this->helpers != false && $loadHelpers === true) {
+			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
+			$helpers = array_keys($loadedHelpers);
+			$helperNames = array_map(array('Inflector', 'variable'), $helpers);
+
+			for ($i = count($helpers) - 1; $i >= 0; $i--) {
+				$name = $helperNames[$i];
+				$helper =& $loadedHelpers[$helpers[$i]];
+
+				if (!isset($___dataForView[$name])) {
+					${$name} =& $helper;
+				}
+				$this->loaded[$helperNames[$i]] =& $helper;
+				$this->{$helpers[$i]} =& $helper;
 			}
-			return $this->loaded;
+			$this->_triggerHelpers('beforeRender');
+			unset($name, $loadedHelpers, $helpers, $i, $helperNames);
 		}
-		return array();
+		
+		# Render template
+		ob_start();
+		$timeStart = getMicrotime();
+		try {
+			$e_path = dirname(__FILE__) . DS . 'exceptions'; # View path to exceptions.
+			$params = array_merge( $params, $this->loaded );
+			$template = $this->TwigEnv->loadTemplate($file);
+			echo $template->render( $params );		
+			if ( $this->debug == true ) {
+				echo "\n<!-- Twig rendered {$file} in " . round(getMicrotime() - $timeStart, 4) . "s -->";
+				echo "\n<!-- Path: {$action} -->\n";
+			}
+		}
+		catch( Twig_SyntaxError $e ) {
+			include( $e_path . DS . 'exception.ctp' );
+			$this->_twigException('Syntax Error', ob_get_clean(), $action, $e);
+		}
+		catch( Twig_RuntimeError $e ) {
+			include( $e_path . DS . 'exception.ctp' );
+			$this->_twigException('Runtime Error', ob_get_clean(), $action, $e);
+		}
+		catch( RuntimeException $e) {
+			include( $e_path . DS . 'exception.ctp' );
+			$this->_twigException('Runtime Error', ob_get_clean(), $action, $e);
+		}
+		catch( Twig_Error $e ) {
+			include( $e_path . DS . 'exception.ctp' );
+			$this->_twigException('Error', ob_get_clean(), $action, $e);
+		}
+		
+		if ($loadHelpers === true) {
+			$this->_triggerHelpers('afterRender');
+		}
+		
+		return ob_get_clean();
 	}
 	
 	/**
-	 * Makes sure that temp folders are set up for twig.
+	 * Output Twig exceptions
+	 * 
+	 * Outputs exceptions raised by Twig using the default layout.
+	 * If debugging is disabled, alternatively logs the exception. 
 	 */
-	private function tmpFolderSetup() {
-		$tmp = TMP . $this->tmpName;
-		$cache = $tmp . DS . $this->cacheName;
-		
-		if( ! is_dir( $tmp )) {
-			mkdir( $tmp );
+	private function _twigException( $type, $content, $filename, Exception $e ) {
+		$type = 'TwigView: ' . $type;
+		$this->viewVars['title_for_layout'] = $type;
+		if($this->debug == true) {
+			$this->plugin = 'twig';
+			echo $this->renderLayout( $content, 'twig_exception' );
+			exit; # Important!
+		} else {
+			$this->log( "[$type]: " . $e->getMessage() );
 		}
-		
-		if( ! is_dir( $cache ) ) {
-			mkdir( $cache );
-		}
-		
-		$this->tmpPath = $tmp;
-		$this->cachePath = $cache;
 	}
 }
