@@ -83,6 +83,7 @@ class TwigView extends View {
 		try {
 			$e_path = dirname(__FILE__) . DS . 'exceptions'; # View path to exceptions.
 			$params = array_merge( $params, $this->loaded );
+			$params['this'] =& $this;
 			$template = $this->TwigEnv->loadTemplate($file);
 			echo $template->render( $params );		
 			if ( $this->debug == true ) {
