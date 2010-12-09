@@ -14,6 +14,9 @@ class TwigView extends View {
 	private 
 	$tmpName = 'twig',
 	$cacheName = 'cache',
+	$defaults = array(
+		'ext' => '.twg'
+	),
 	$debug = false,
 	$tmpPath,
 	$error_view_path,
@@ -21,30 +24,26 @@ class TwigView extends View {
 	$TwigLoader,
 	$TwigEnv;
 	
-	const DEFAULT_EXTENSION = '.twg';
-	
 	public function __construct( $controller, $register=true )
 	{
-		parent::__construct($controller, $register);
-		
+		parent::__construct($controller, $register);		
 		Twig_Autoloader::register();
 		
-		$this->debug = (boolean) Configure::read('debug');
 		
-		// Set up the Twig environment instance.
-		$this->TwigLoader = new Twig_Loader_Filesystem( VIEWS ); # Have to load a path. Not really useful yet.
+		$this->debug = (boolean) Configure::read('debug');
+		$this->settings = array_merge($this->defaults, (array) Configure::read('Twig'));
+		
+		# Set up extension.
+		$ext = $this->settings['ext'];
+		$this->ext = substr($ext, 0, 1) == '.' ? $ext : ".{$ext}";
+		
+		# Set up the Twig environment instance.
+		$this->TwigLoader = new Twig_Loader_Filesystem( App::path('views') );
 		$this->TwigEnv = new Twig_Environment( $this->TwigLoader, array(
 			'cache' => Configure::read('Cache.disable') == true ? false : TWIG_CACHE_PATH,
 			'debug' => $this->debug,
 			'auto_reload' => $this->debug
 		));
-		
-		$this->ext = self::DEFAULT_EXTENSION;
-		
-		if( isset( $controller->viewExt ) && !empty( $controller->viewExt ) ) {
-			$ext = $controller->viewExt;
-			$this->ext = substr($ext, 0, 1) == '.' ? $ext : ".{$ext}";
-		}
 	}
 	
 	public function _render($action, $params, $loadHelpers = true, $cached = false) {
@@ -80,6 +79,7 @@ class TwigView extends View {
 		# Render template
 		ob_start();
 		$timeStart = getMicrotime();
+		
 		try {
 			$e_path = dirname(__FILE__) . DS . 'exceptions'; # View path to exceptions.
 			$params = array_merge( $params, $this->loaded );
@@ -114,6 +114,81 @@ class TwigView extends View {
 		
 		return ob_get_clean();
 	}
+	
+	
+	/**
+	 * Rework of default element method in Core.
+	 * Allows for elements with $this->ext and the default .ctp extension
+	 * like View::_render() method.
+	 * 
+	 * Requires a little more work to find files now that the method
+	 * is looping through extensions.
+	 * 
+	 * @param string $name Name of the element minus the file extension.
+	 * @param array $params Array of parameters to pass to the element.
+	 * @return string Rendered element
+	 * @access public
+	 */
+	public function element($name, $params = array(), $loadHelpers = false) {
+			$file = $plugin = $key = null;
+
+			if (isset($params['plugin'])) {
+				$plugin = $params['plugin'];
+			}
+
+			if (isset($this->plugin) && !$plugin) {
+				$plugin = $this->plugin;
+			}
+
+			if (isset($params['cache'])) {
+				$expires = '+1 day';
+
+				if (is_array($params['cache'])) {
+					$expires = $params['cache']['time'];
+					$key = Inflector::slug($params['cache']['key']);
+				} elseif ($params['cache'] !== true) {
+					$expires = $params['cache'];
+					$key = implode('_', array_keys($params));
+				}
+
+				if ($expires) {
+					$cacheFile = 'element_' . $key . '_' . $plugin . Inflector::slug($name);
+					$cache = cache('views' . DS . $cacheFile, null, $expires);
+
+					if (is_string($cache)) {
+						return $cache;
+					}
+				}
+			}
+			$paths = $this->_paths($plugin);
+			
+			$exts = array($this->ext);
+			if($this->ext !== '.ctp') {
+				array_push($exts, '.ctp');
+			}
+			
+			foreach ($exts as $ext) {
+				foreach($paths as $path) {
+					if (file_exists($path . 'elements' . DS . $name . $ext)) {
+						$file = $path . 'elements' . DS . $name . $ext;
+						break;
+					}
+				}
+			}
+
+			if (is_file($file)) {
+				$params = array_merge_recursive($params, $this->loaded);
+				$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
+				if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
+					cache('views' . DS . $cacheFile, $element, $expires);
+				}
+				return $element;
+			}
+
+			if (Configure::read() > 0) {
+				return "Not Found: " . $file;
+			}
+		}
 	
 	/**
 	 * Output Twig exceptions
