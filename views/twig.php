@@ -1,28 +1,70 @@
 <?php
+/**
+ * CakePHP view for Twig Template Engine.
+ * Requires CakePHP 1.3 and PHP 5.
+ *
+ * Learn more about Twig at http://www.twig-project.org/
+ * 
+ * @author Paul Redmond <paulrredmond@gmail.com>
+ * @link https://github.com/paulredmond/cakephp-twig Github
+ * @link http://goredmonster.com/ Author
+ * @package twig
+ * @subpackage twig.views.twig
+ * @license MIT
+ */
 
+
+# Lets do this...
 App::import('Vendor', 'Twig.Twig/Autoloader');
 
+# Override in bootstrap.php if needed.
 if ( ! defined( 'TWIG_CACHE_PATH' ) ) {
 	define( 'TWIG_CACHE_PATH', TMP . 'twig' . DS .  'cache' );
 }
 
+
 /**
- * TwigView class for Cakephp.
+ * TwigView class for Cakephp 1.3 and PHP 5
+ * 
+ * @package twig
+ * @subpackage twig.views.twig
+ * @author Paul Redmond <paulrredmond@gmail.com>
+ * @link http://api13.cakephp.org/class/view
  */
 class TwigView extends View {
 	
-	private 
-	$tmpName = 'twig',
-	$cacheName = 'cache',
-	$defaults = array(
-		'ext' => '.twg'
-	),
-	$debug = false,
-	$tmpPath,
-	$error_view_path,
-	$cachePath,
-	$TwigLoader,
-	$TwigEnv;
+	
+	/**
+	 * Default configuration options. Override array with Configure::write('Twig', array('ext' => 'twig'))
+	 */
+	private $defaults = array(
+		'ext' => '.twg',
+		'debug_comments' => 'true' # only matters if Configure::read('debug') value > 0
+	);
+	
+	
+	/**
+	 * Twig debug setting. Debugging is based on Configure::read('debug') value.
+	 */
+	private $debug = false;
+	
+	
+	/**
+	 * TwigLoader
+	 *
+	 * Holds the Twig_Loader_Filesystem object.
+	 * @access private
+	 */
+	protected $TwigLoader;
+	
+	
+	/**
+	 * TwigEnv
+	 * 
+	 * The Twig_Environment object.
+	 */
+	protected $TwigEnv;
+	
 	
 	public function __construct( $controller, $register=true )
 	{
@@ -46,6 +88,16 @@ class TwigView extends View {
 		));
 	}
 	
+	/**
+	 * Override default View _render method.
+	 * Uses Twig's exception handling for errors.
+	 * 
+	 * @param $action file that is going to be rendered.
+	 * @param $params Data for the view being rendered.
+	 * @param $loadHelpers Whether or not to load helpers.
+	 * @param $cached (default: false)  Whether or not to create a cache file. Only applies to .ctp files.
+	 * @link http://api13.cakephp.org/class/view#method-View_render
+	 */
 	public function _render($action, $params, $loadHelpers = true, $cached = false) {
 		if (pathinfo( $action, PATHINFO_EXTENSION ) == 'ctp' ) {
 			return parent::_render( $action, $params, $loadHelpers, $cached );
@@ -85,25 +137,33 @@ class TwigView extends View {
 			$params = array_merge( $params, $this->loaded );
 			$params['this'] =& $this;
 			$template = $this->TwigEnv->loadTemplate($file);
-			echo $template->render( $params );		
-			if ( $this->debug == true ) {
+			echo $template->render( $params );
+			if ( $this->debug == true && $this->settings['debug_comments'] == true) {
 				echo "\n<!-- Twig rendered {$file} in " . round(getMicrotime() - $timeStart, 4) . "s -->";
 				echo "\n<!-- Path: {$action} -->\n";
 			}
 		}
 		catch( Twig_SyntaxError $e ) {
-			include( $e_path . DS . 'exception.ctp' );
+			$this->_clearAllBuffers();
+			ob_start();
+			include( $e_path . DS . 'syntax.ctp' );
 			$this->_twigException('Syntax Error', ob_get_clean(), $action, $e);
 		}
 		catch( Twig_RuntimeError $e ) {
-			include( $e_path . DS . 'exception.ctp' );
+			$this->_clearAllBuffers();
+			ob_start();
+			include( $e_path . DS . 'runtime.ctp' );
 			$this->_twigException('Runtime Error', ob_get_clean(), $action, $e);
 		}
 		catch( RuntimeException $e) {
-			include( $e_path . DS . 'exception.ctp' );
+			$this->_clearAllBuffers();
+			ob_start();
+			include( $e_path . DS . 'runtime.ctp' );
 			$this->_twigException('Runtime Error', ob_get_clean(), $action, $e);
 		}
 		catch( Twig_Error $e ) {
+			$this->_clearAllBuffers();
+			ob_start();
 			include( $e_path . DS . 'exception.ctp' );
 			$this->_twigException('Error', ob_get_clean(), $action, $e);
 		}
@@ -189,7 +249,8 @@ class TwigView extends View {
 			return "Not Found: " . $file;
 		}
 	}
-	
+
+
 	/**
 	 * Output Twig exceptions
 	 * 
@@ -205,6 +266,18 @@ class TwigView extends View {
 			exit; # Important!
 		} else {
 			$this->log( "[$type]: " . $e->getMessage() );
+		}
+	}
+
+	
+	/**
+	 * If an exception is thrown during rendering,
+	 * this cheesy method ensures all buffers are cleared
+	 * before outputting debugging info.
+	 */
+	private function _clearAllBuffers() {
+		foreach(ob_list_handlers() as $buffer) {
+			ob_end_clean();
 		}
 	}
 }

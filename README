@@ -1,1 +1,57 @@
-A CakePHP view class for Twig. Currently in development, not ready for production.
+/**
+ * A CakePHP view class for Twig.
+ *
+ * @version 1.0
+ * @package twig.views
+ * @subpackage twig.views.twig
+ * @author Paul Redmond <paulrredmond@gmail.com>
+ * @license MIT
+ */
+
+There are a few other TwigView implementations out there already. I built my own because it helped me to learn more about dropping in a custom view/template engine into CakePHP. I am pretty happy with the results :)
+
+
+Setup:
+--------------------------------------------------------------------------------
+* Run "git clone git@github.com:paulredmond/cakephp-twig.git twig" from your plugins folder or APP/plugins folder.
+
+* Add/update app/app_controller.php to
+	
+	public $view = 'Twig.Twig';
+	
+* Create APP/tmp/twig/cache and make sure it's writable on the server, or define your own path in the bootstrap and make that that path is writable.
+	
+	In APP/bootstrap.php:
+	define( 'TWIG_CACHE_PATH', '/path/to/writable/cache' );
+	
+* Configure non-default settings in APP/config/core.php
+	
+	The only config settings are 'ext' and 'debug_comments':
+		- ext: the file extension used to render twig templates "with or without the ."
+		- debug_comments: TwigView adds render time and full path to each rendered twig template. You can disable by setting to false (default: true).
+		
+		* Debug comments are never rendered in any circumstance if debug is false, ie. Configure::write('debug', 0);
+		
+	# Sample custom config.
+	Configure::write('Twig', array(
+		'ext' => '.html', # Doesn't matter if "." is included, either way, it will work.
+		'debug_comments' => false
+	));
+	
+* Report bugs or performance issues on GitHub please - https://github.com/paulredmond/cakephp-twig/issues
+
+
+Notes
+--------------------------------------------------------------------------------
+Twig doesn't care what file extension is used, and I chose the default of "twg". Feel free to change it to whatever you want, I've provided a configuration setting for the extension. I opted to rewrite the View::element() method which may require more looping to find the correct template. I recommend sticking with twig templates for all views, but I also understand that some application may already have many ctp views.
+
+Todo
+--------------------------------------------------------------------------------
+@todo Properly add Twig vendor files as a submodule
+
+
+References
+--------------------------------------------------------------------------------
+* Twig Documentation - http://www.twig-project.org/documentation
+* Twig Extensions - http://www.twig-project.org/doc/extensions/index.html
+* Twig GitHub repo - https://github.com/fabpot/Twig
