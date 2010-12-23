@@ -39,7 +39,7 @@ class TwigView extends View {
 	 */
 	private $defaults = array(
 		'ext' => '.twg',
-		'debug_comments' => 'true' # only matters if Configure::read('debug') value > 0
+		'debug_comments' => 'true', # only matters if Configure::read('debug') value > 0
 	);
 	
 	
@@ -48,6 +48,11 @@ class TwigView extends View {
 	 */
 	private $debug = false;
 	
+	
+	/**
+	 * Array of paths where twig will look for templates.
+	 */
+	protected $templatePaths = array();
 	
 	/**
 	 * TwigLoader
@@ -78,9 +83,13 @@ class TwigView extends View {
 		# Set up extension.
 		$ext = $this->settings['ext'];
 		$this->ext = substr($ext, 0, 1) == '.' ? $ext : ".{$ext}";
+
+		# Merging in all possible base paths from which a template could be rendered.
+		# Might remove ROOT/plugins in the future.
+		$this->templatePaths = array_merge(App::path('views'), array(APP, ROOT . DS . 'plugins'));
 		
 		# Set up the Twig environment instance.
-		$this->TwigLoader = new Twig_Loader_Filesystem( App::path('views') );
+		$this->TwigLoader = new Twig_Loader_Filesystem( $this->templatePaths );
 		$this->TwigEnv = new Twig_Environment( $this->TwigLoader, array(
 			'cache' => Configure::read('Cache.disable') == true ? false : TWIG_CACHE_PATH,
 			'debug' => $this->debug,
@@ -103,9 +112,9 @@ class TwigView extends View {
 			return parent::_render( $action, $params, $loadHelpers, $cached );
 		}
 		
-		# Set the twig path to the current filename path.
+		
 		list($file, $dir) = array( basename( $action ), dirname( $action ) );
-		$this->TwigLoader->setPaths( $dir );
+		$relative = str_replace($this->TwigLoader->getPaths(), '', $action);
 
 		# Set up helpers.
 		$loadedHelpers = array();
@@ -136,7 +145,7 @@ class TwigView extends View {
 			$e_path = dirname(__FILE__) . DS . 'exceptions'; # View path to exceptions.
 			$params = array_merge( $params, $this->loaded );
 			$params['this'] =& $this;
-			$template = $this->TwigEnv->loadTemplate($file);
+			$template = $this->TwigEnv->loadTemplate($relative);
 			echo $template->render( $params );
 			if ( $this->debug == true && $this->settings['debug_comments'] == true) {
 				echo "\n<!-- Twig rendered {$file} in " . round(getMicrotime() - $timeStart, 4) . "s -->";
