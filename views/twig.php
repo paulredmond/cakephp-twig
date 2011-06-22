@@ -42,7 +42,7 @@ class TwigView extends View {
 		'ext' => '.twig',
 		'debug_comments' => 'true', # only matters if Configure::read('debug') value > 0
 		'lexer' => array(
-			'tag_comment'  => array('{#', '#}'),
+		    'tag_comment'  => array('{#', '#}'),
 		    'tag_block'    => array('{%', '%}'),
 		    'tag_variable' => array('{{', '}}'),
 		),
