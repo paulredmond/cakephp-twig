@@ -37,7 +37,7 @@ Setup:
 		'ext' => '.html', # Doesn't matter if "." is included, either way, it will work.
 		'debug_comments' => false,
 		'lexer' => array( # Ruby ERB syntax example.
-			'tag_comment'  => array('<%#', '%>'),
+		    'tag_comment'  => array('<%#', '%>'),
 		    'tag_block'    => array('<%', '%>'),
 		    'tag_variable' => array('<%=', '%>'),
 	));
