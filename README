@@ -53,6 +53,11 @@ Todo
 --------------------------------------------------------------------------------
 @todo Properly add Twig vendor files as a submodule
 
+Changelog
+--------------------------------------------------------------------------------
+21-Jun-2011
+	- Changed default extension from "twg" to "twig"
+	- Added lexer support
 
 References
 --------------------------------------------------------------------------------
