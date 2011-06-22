@@ -10,11 +10,13 @@
 
 There are a few other TwigView implementations out there already. I built my own because it helped me to learn more about dropping in a custom view/template engine into CakePHP. I am pretty happy with the results :)
 
+Installation:
+--------------------------------------------------------------------------------
+* Run "git clone git@github.com:paulredmond/cakephp-twig.git twig" from your plugins folder or APP/plugins folder.
+* Run "git submodule add https://github.com/fabpot/Twig.git vendors/Twig" from the twig plugin folder you just cloned.
 
 Setup:
 --------------------------------------------------------------------------------
-* Run "git clone git@github.com:paulredmond/cakephp-twig.git twig" from your plugins folder or APP/plugins folder.
-
 * Add/update app/app_controller.php to
 	
 	public $view = 'Twig.Twig';
