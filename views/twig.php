@@ -15,7 +15,8 @@
 
 
 # Lets do this...
-App::import('Vendor', 'Twig.Twig/Autoloader');
+$_file = 'Twig' . DS . 'lib' . DS . 'Twig' . DS . 'Autoloader.php';
+App::import('Vendor', 'Twig.Autoloader', array('file' => $_file));
 
 # Override in bootstrap.php if needed.
 if ( ! defined( 'TWIG_CACHE_PATH' ) ) {
@@ -108,9 +109,15 @@ class TwigView extends View {
 		$this->TwigEnv = new Twig_Environment( $this->TwigLoader, array(
 			'cache' => Configure::read('Cache.disable') == true ? false : TWIG_CACHE_PATH,
 			'debug' => $this->debug,
-			'auto_reload' => $this->debug
+			'auto_reload' => $this->debug,
+			/**
+			 * Unfortunately autoescape has to be false for 2-pass rendering.
+			 * @TODO don't rely on 2-pass rendering - use Twig's template inheritance instead.
+			 * {@link http://www.twig-project.org/doc/templates.html#dynamic-inheritance Dynamic Interitance}
+			 */
+			'autoescape' => false
 		));
-		
+
 		# Initialize a lexer instance with configured settings.
 		$this->TwigLexer = new Twig_Lexer($this->TwigEnv, $this->settings['lexer']);
 		$this->TwigEnv->setLexer($this->TwigLexer);
