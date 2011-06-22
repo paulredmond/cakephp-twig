@@ -38,11 +38,16 @@ class TwigView extends View {
 	 * Default configuration options. Override array with Configure::write('Twig', array('ext' => 'twig'))
 	 */
 	private $defaults = array(
-		'ext' => '.twg',
+		'ext' => '.twig',
 		'debug_comments' => 'true', # only matters if Configure::read('debug') value > 0
+		'lexer' => array(
+			'tag_comment'  => array('{#', '#}'),
+		    'tag_block'    => array('{%', '%}'),
+		    'tag_variable' => array('{{', '}}'),
+		),
 	);
 	
-	
+
 	/**
 	 * Twig debug setting. Debugging is based on Configure::read('debug') value.
 	 */
@@ -54,14 +59,24 @@ class TwigView extends View {
 	 */
 	protected $templatePaths = array();
 	
+	
 	/**
 	 * TwigLoader
 	 *
 	 * Holds the Twig_Loader_Filesystem object.
-	 * @access private
+	 * @access protected
 	 */
 	protected $TwigLoader;
 	
+	/**
+	 * TwigLexer object
+	 * 
+	 * Allows custom syntax in templates for block delimiters.
+	 * 
+	 * @access protected
+	 * @link http://www.twig-project.org/doc/recipes.html#customizing-the-syntax
+	 */
+	protected $TwigLexer;
 	
 	/**
 	 * TwigEnv
@@ -95,6 +110,11 @@ class TwigView extends View {
 			'debug' => $this->debug,
 			'auto_reload' => $this->debug
 		));
+		
+		# Initialize a lexer instance with configured settings.
+		$this->TwigLexer = new Twig_Lexer($this->TwigEnv, $this->settings['lexer']);
+		$this->TwigEnv->setLexer($this->TwigLexer);
+		
 	}
 	
 	/**
@@ -232,12 +252,12 @@ class TwigView extends View {
 		$paths = $this->_paths($plugin);
 		
 		$exts = array($this->ext);
-		if($this->ext !== '.ctp') {
+		if ($this->ext !== '.ctp') {
 			array_push($exts, '.ctp');
 		}
 		
 		foreach ($exts as $ext) {
-			foreach($paths as $path) {
+			foreach ($paths as $path) {
 				if (file_exists($path . 'elements' . DS . $name . $ext)) {
 					$file = $path . 'elements' . DS . $name . $ext;
 					break;
@@ -269,7 +289,7 @@ class TwigView extends View {
 	private function _twigException( $type, $content, $filename, Exception $e ) {
 		$type = 'TwigView: ' . $type;
 		$this->viewVars['title_for_layout'] = $type;
-		if($this->debug == true) {
+		if ($this->debug == true) {
 			$this->plugin = 'twig';
 			echo $this->renderLayout( $content, 'twig_exception' );
 			exit; # Important!
@@ -285,7 +305,7 @@ class TwigView extends View {
 	 * before outputting debugging info.
 	 */
 	private function _clearAllBuffers() {
-		foreach(ob_list_handlers() as $buffer) {
+		foreach (ob_list_handlers() as $buffer) {
 			ob_end_clean();
 		}
 	}

@@ -26,16 +26,20 @@ Setup:
 	
 * Configure non-default settings in APP/config/core.php
 	
-	The only config settings are 'ext' and 'debug_comments':
+	Configuration options:
 		- ext: the file extension used to render twig templates "with or without the ."
 		- debug_comments: TwigView adds render time and full path to each rendered twig template. You can disable by setting to false (default: true).
-		
+		- lexer: TwigLexer object allows for custom syntax in block delimiters. For more info see http://www.twig-project.org/doc/recipes.html#customizing-the-syntax
 		* Debug comments are never rendered in any circumstance if debug is false, ie. Configure::write('debug', 0);
 		
 	# Sample custom config.
 	Configure::write('Twig', array(
 		'ext' => '.html', # Doesn't matter if "." is included, either way, it will work.
-		'debug_comments' => false
+		'debug_comments' => false,
+		'lexer' => array( # Ruby ERB syntax example.
+			'tag_comment'  => array('<%#', '%>'),
+		    'tag_block'    => array('<%', '%>'),
+		    'tag_variable' => array('<%=', '%>'),
 	));
 	
 * Report bugs or performance issues on GitHub please - https://github.com/paulredmond/cakephp-twig/issues
@@ -43,7 +47,7 @@ Setup:
 
 Notes
 --------------------------------------------------------------------------------
-Twig doesn't care what file extension is used, and I chose the default of "twg". Feel free to change it to whatever you want, I've provided a configuration setting for the extension. I opted to rewrite the View::element() method which may require more looping to find the correct template. I recommend sticking with twig templates for all views, but I also understand that some application may already have many ctp views.
+Twig doesn't care what file extension is used, and I chose the default of "twig". Feel free to change it to whatever you want, I've provided a configuration setting for the extension. I opted to rewrite the View::element() method which may require more looping to find the correct template. I recommend sticking with twig templates for all views, but I also understand that some application may already have many ctp views.
 
 Todo
 --------------------------------------------------------------------------------
