@@ -17,12 +17,15 @@
 # Lets do this...
 $_file = 'Twig' . DS . 'lib' . DS . 'Twig' . DS . 'Autoloader.php';
 App::import('Vendor', 'Twig.Autoloader', array('file' => $_file));
+Twig_Autoloader::register();
 
 # Override in bootstrap.php if needed.
 if ( ! defined( 'TWIG_CACHE_PATH' ) ) {
 	define( 'TWIG_CACHE_PATH', TMP . 'twig' . DS .  'cache' );
 }
 
+// Extensions
+App::import('Lib', 'Twig.ExtensionBasic');
 
 /**
  * TwigView class for Cakephp 1.3 and PHP 5
@@ -89,9 +92,7 @@ class TwigView extends View {
 	
 	public function __construct( $controller, $register=true )
 	{
-		parent::__construct($controller, $register);		
-		Twig_Autoloader::register();
-		
+		parent::__construct($controller, $register);
 		
 		$this->debug = (boolean) Configure::read('debug');
 		$this->settings = array_merge($this->defaults, (array) Configure::read('Twig'));
@@ -122,6 +123,7 @@ class TwigView extends View {
 		$this->TwigLexer = new Twig_Lexer($this->TwigEnv, $this->settings['lexer']);
 		$this->TwigEnv->setLexer($this->TwigLexer);
 		
+		$this->TwigEnv->addExtension(new Twig_Extension_Basic);
 	}
 	
 	/**
