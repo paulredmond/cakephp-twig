@@ -1,7 +1,7 @@
 /**
  * A CakePHP view class for Twig.
  *
- * @version 1.0
+ * @version 1.0.2
  * @package twig.views
  * @subpackage twig.views.twig
  * @author Paul Redmond <paulrredmond@gmail.com>
@@ -54,10 +54,13 @@ Twig doesn't care what file extension is used, and I chose the default of "twig"
 
 Todo
 --------------------------------------------------------------------------------
-@todo Properly add Twig vendor files as a submodule
+@todo test/support for CakePHP 2.0 branch.
 
 Changelog
 --------------------------------------------------------------------------------
+21-Oct-2011
+    - Updated Twig library to 1.2
+    - Added extension support for basic functions (like debug)
 21-Jun-2011
 	- Changed default extension from "twg" to "twig"
 	- Added lexer support
