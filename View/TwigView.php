@@ -1,22 +1,21 @@
 <?php
 /**
  * CakePHP view for Twig Template Engine.
- * Requires CakePHP 1.3 and PHP 5.
+ * Requires CakePHP 2 and PHP 5.
  *
  * Learn more about Twig at http://www.twig-project.org/
  * 
  * @author Paul Redmond <paulrredmond@gmail.com>
  * @link https://github.com/paulredmond/cakephp-twig Github
  * @link http://goredmonster.com/ Author
- * @package twig
- * @subpackage twig.views.twig
+ * @package TwigPlugin
+ * @subpackage TwigPlugin.View.Twig
  * @license MIT
  */
 
 
 # Lets do this...
-$_file = 'Twig' . DS . 'lib' . DS . 'Twig' . DS . 'Autoloader.php';
-App::import('Vendor', 'Twig.Autoloader', array('file' => $_file));
+require dirname(__FILE__) . '/../Vendor/.composer/autoload.php';
 Twig_Autoloader::register();
 
 # Override in bootstrap.php if needed.
@@ -90,7 +89,7 @@ class TwigView extends View {
 	protected $TwigEnv;
 	
 	
-	public function __construct( $controller, $register=true )
+	public function __construct($controller, $register=true)
 	{
 		parent::__construct($controller, $register);
 		
@@ -102,8 +101,9 @@ class TwigView extends View {
 		$this->ext = substr($ext, 0, 1) == '.' ? $ext : ".{$ext}";
 
 		# Merging in all possible base paths from which a template could be rendered.
-		# Might remove ROOT/plugins in the future.
-		$this->templatePaths = array_merge(App::path('views'), array(APP, ROOT . DS . 'plugins'));
+		# Stupid legacy "views" (which is not packaged by default) folder is breaking Twig loader.
+		# $this->templatePaths = array_merge(App::path('View'), array(ROOT . DS . 'plugins'));
+		$this->templatePaths = array(APP . DS . 'View', ROOT . DS . 'plugins');
 		
 		# Set up the Twig environment instance.
 		$this->TwigLoader = new Twig_Loader_Filesystem( $this->templatePaths );
@@ -123,7 +123,7 @@ class TwigView extends View {
 		$this->TwigLexer = new Twig_Lexer($this->TwigEnv, $this->settings['lexer']);
 		$this->TwigEnv->setLexer($this->TwigLexer);
 		
-		$this->TwigEnv->addExtension(new Twig_Extension_Basic);
+		$this->TwigEnv->addExtension(new Twig_Extension_Basic());
 	}
 	
 	/**
@@ -136,12 +136,11 @@ class TwigView extends View {
 	 * @param $cached (default: false)  Whether or not to create a cache file. Only applies to .ctp files.
 	 * @link http://api13.cakephp.org/class/view#method-View_render
 	 */
-	public function _render($action, $params, $loadHelpers = true, $cached = false) {
-		if (pathinfo( $action, PATHINFO_EXTENSION ) == 'ctp' ) {
-			return parent::_render( $action, $params, $loadHelpers, $cached );
+	public function _render($__view, $__data = array()) {
+		if (pathinfo($__view, PATHINFO_EXTENSION ) == 'ctp' ) {
+			return parent::_render($__view, $__data);
 		}
-		
-		
+
 		list($file, $dir) = array( basename( $action ), dirname( $action ) );
 		$relative = str_replace($this->TwigLoader->getPaths(), '', $action);
 

@@ -1,0 +1,22 @@
+
+{
+    "name": "paulredmond/cakephp-twig",
+    "description": "Twig plugin for CakePHP 2.0",
+    "keywords": ["plugin", "cakephp", "view"],
+    "homepage": "https://github.com/paulredmond/cakephp-twig",
+    "version": "2.0.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Paul Redmond",
+            "email": "paulrredmond@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.6",
+        "twig/twig": "1.5.1"
+    },
+    "config": {
+        "vendor-dir": "Vendor"
+    }
+}
