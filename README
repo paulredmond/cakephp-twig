@@ -13,9 +13,9 @@ CakePHP 2 compatable TwigView class. Very broken ATM.
 Plans:
 	
 	* Custom Twig FileLoader to take advantage of conventions possibly similar to:	
-		{% extends 'Plugin.Controller.LayoutFileName' %}
+		{% extends 'Plugin.LayoutFileName' %}
 		or
-		{% extends 'App.Controller.LayoutFileName' %}
+		{% extends 'App.LayoutFileName' %}
 	* Don't rely on 2-pass rendering, rely on extends/blocks exclusively.
 	* Try to be compatible with ctp rendering? Not sure ATM.
 	* Make it fast, fast, fast.
