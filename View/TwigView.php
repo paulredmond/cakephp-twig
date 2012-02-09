@@ -13,18 +13,9 @@
  * @license MIT
  */
 
+use TwigPlugin\Extension\BasicExtension;
+use TwigPlugin\Loader\FilesystemLoader;
 
-# Lets do this...
-require dirname(__FILE__) . '/../Vendor/.composer/autoload.php';
-Twig_Autoloader::register();
-
-# Override in bootstrap.php if needed.
-if ( ! defined( 'TWIG_CACHE_PATH' ) ) {
-	define( 'TWIG_CACHE_PATH', TMP . 'twig' . DS .  'cache' );
-}
-
-// Extensions
-App::import('Lib', 'Twig.ExtensionBasic');
 
 /**
  * TwigView class for Cakephp 1.3 and PHP 5
@@ -123,7 +114,7 @@ class TwigView extends View {
 		$this->TwigLexer = new Twig_Lexer($this->TwigEnv, $this->settings['lexer']);
 		$this->TwigEnv->setLexer($this->TwigLexer);
 		
-		$this->TwigEnv->addExtension(new Twig_Extension_Basic());
+		$this->TwigEnv->addExtension(new BasicExtension());
 	}
 	
 	/**

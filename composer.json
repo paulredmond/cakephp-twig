@@ -1,6 +1,6 @@
 
 {
-    "name": "paulredmond/cakephp-twig",
+    "name": "paulredmond/twigplugin",
     "description": "Twig plugin for CakePHP 2.0",
     "keywords": ["plugin", "cakephp", "view"],
     "homepage": "https://github.com/paulredmond/cakephp-twig",
@@ -18,5 +18,10 @@
     },
     "config": {
         "vendor-dir": "Vendor"
+    },
+    "autoload": {
+        "psr-0": {
+           "TwigPlugin": "Lib/"
+        }
     }
 }
