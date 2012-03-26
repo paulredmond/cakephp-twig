@@ -5,7 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /> 
 </head> 
 <body> 
-<?php __($content_for_layout); ?>
-<p>Learn more about <?php __($html->link('Twig Exceptions', 'http://www.twig-project.org/book/03-Twig-for-Developers')) ?></p>
+<?php echo __($content_for_layout); ?>
+<p>Learn more about <?php echo __($this->Html->link('Twig Exceptions', 'http://www.twig-project.org/book/03-Twig-for-Developers')) ?></p>
 </body> 
 </html>

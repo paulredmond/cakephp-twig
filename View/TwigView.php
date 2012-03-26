@@ -14,8 +14,11 @@
  */
 
 use TwigPlugin\Extension\BasicExtension;
-use TwigPlugin\Loader\FilesystemLoader;
+use TwigPlugin\Templating\Loader\FilesystemLoader;
+use TwigPlugin\Templating\Loader\TemplateLocator;
+use TwigPlugin\Templating\TemplateNameParser;
 
+use Symfony\Component\Config\FileLocator;
 
 /**
  * TwigView class for Cakephp 1.3 and PHP 5
@@ -93,11 +96,18 @@ class TwigView extends View {
 
 		# Merging in all possible base paths from which a template could be rendered.
 		# Stupid legacy "views" (which is not packaged by default) folder is breaking Twig loader.
-		# $this->templatePaths = array_merge(App::path('View'), array(ROOT . DS . 'plugins'));
-		$this->templatePaths = array(APP . DS . 'View', ROOT . DS . 'plugins');
+		$this->templatePaths = array_merge(App::path('View'), array(ROOT . DS . 'plugins'));
+		// $this->templatePaths = array(APP . 'View', ROOT . DS . 'plugins');
 		
 		# Set up the Twig environment instance.
-		$this->TwigLoader = new Twig_Loader_Filesystem( $this->templatePaths );
+		$this->TwigLoader = new FilesystemLoader(
+		    new TemplateNameParser,
+		    new TemplateLocator(
+		        new FileLocator($this->getPaths($this->plugin)),
+		        $this
+		    )
+		);
+
 		$this->TwigEnv = new Twig_Environment( $this->TwigLoader, array(
 			'cache' => Configure::read('Cache.disable') == true ? false : TWIG_CACHE_PATH,
 			'debug' => $this->debug,
@@ -117,6 +127,29 @@ class TwigView extends View {
 		$this->TwigEnv->addExtension(new BasicExtension());
 	}
 	
+	public function getPaths($plugin = null)
+	{
+	    return $this->_paths($plugin);
+	}
+	
+	/**
+	 * Main render method.
+	 * 
+	 * Totally broken right now.
+	 */
+	public function render($view = null, $layout = null)
+	{
+	    $viewFileName = $this->_getViewFileName($view);
+	    // $relative = str_replace($this->templatePaths, '', $viewFileName);
+	    // $relative = ltrim($relative, '/');
+
+	    $template = $this->TwigEnv->loadTemplate($viewFileName);
+	    $this->output = $template->render(array_merge($this->viewVars, array('_view' => $this)));
+        $this->hasRendered = true;
+
+        return $this->output;
+	}
+	
 	/**
 	 * Override default View _render method.
 	 * Uses Twig's exception handling for errors.
@@ -132,12 +165,12 @@ class TwigView extends View {
 			return parent::_render($__view, $__data);
 		}
 
-		list($file, $dir) = array( basename( $action ), dirname( $action ) );
-		$relative = str_replace($this->TwigLoader->getPaths(), '', $action);
+		list($file, $dir) = array( basename( $__view ), dirname( $__view ) );
+		$relative = str_replace($this->TwigLoader->getPaths(), '', $__view);
 
 		# Set up helpers.
 		$loadedHelpers = array();
-		if ($this->helpers != false && $loadHelpers === true) {
+		if ($this->helpers != false && $loadedHelpers === true) {
 			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 			$helpers = array_keys($loadedHelpers);
 			$helperNames = array_map(array('Inflector', 'variable'), $helpers);
@@ -158,17 +191,17 @@ class TwigView extends View {
 		
 		# Render template
 		ob_start();
-		$timeStart = getMicrotime();
+		$timeStart = microtime(true);
 		
 		try {
 			$e_path = dirname(__FILE__) . DS . 'exceptions'; # View path to exceptions.
-			$params = array_merge( $params, $this->loaded );
+			$params = array_merge( $__data, (array) $this->loaded );
 			$params['this'] =& $this;
 			$template = $this->TwigEnv->loadTemplate($relative);
 			echo $template->render( $params );
 			if ( $this->debug == true && $this->settings['debug_comments'] == true) {
-				echo "\n<!-- Twig rendered {$file} in " . round(getMicrotime() - $timeStart, 4) . "s -->";
-				echo "\n<!-- Path: {$action} -->\n";
+				echo "\n<!-- Twig rendered {$file} in " . round(microtime(true) - $timeStart, 4) . "s -->";
+				echo "\n<!-- Path: {$__view} -->\n";
 			}
 		}
 		catch( Twig_SyntaxError $e ) {
@@ -193,10 +226,10 @@ class TwigView extends View {
 			$this->_clearAllBuffers();
 			ob_start();
 			include( $e_path . DS . 'exception.ctp' );
-			$this->_twigException('Error', ob_get_clean(), $action, $e);
+			$this->_twigException('Error', ob_get_clean(), $__view, $e);
 		}
 		
-		if ($loadHelpers === true) {
+		if ($loadedHelpers === true) {
 			$this->_triggerHelpers('afterRender');
 		}
 		
@@ -257,15 +290,15 @@ class TwigView extends View {
 		
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
-				if (file_exists($path . 'elements' . DS . $name . $ext)) {
-					$file = $path . 'elements' . DS . $name . $ext;
+				if (file_exists($path . 'Elements' . DS . $name . $ext)) {
+					$file = $path . 'Elements' . DS . $name . $ext;
 					break;
 				}
 			}
 		}
 
 		if (is_file($file)) {
-			$params = array_merge_recursive($params, $this->loaded);
+			$params = array_merge_recursive($params, (array) $this->loaded);
 			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 			if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
 				cache('views' . DS . $cacheFile, $element, $expires);
@@ -278,7 +311,6 @@ class TwigView extends View {
 		}
 	}
 
-
 	/**
 	 * Output Twig exceptions
 	 * 
@@ -289,7 +321,7 @@ class TwigView extends View {
 		$type = 'TwigView: ' . $type;
 		$this->viewVars['title_for_layout'] = $type;
 		if ($this->debug == true) {
-			$this->plugin = 'twig';
+			$this->plugin = 'TwigPlugin';
 			echo $this->renderLayout( $content, 'twig_exception' );
 			exit; # Important!
 		} else {
