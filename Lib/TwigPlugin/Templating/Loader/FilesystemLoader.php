@@ -28,28 +28,38 @@ class FilesystemLoader extends \Twig_Loader_Filesystem
 
     public function findTemplate($template)
     {
-        if (isset($this->cache[$template])) {
-            return $this->cache[$template];
+        $logicalName = (string) $template;
+
+        if (isset($this->cache[$logicalName])) {
+            return $this->cache[$logicalName];
         }
         
         if (self::isAbsolutePath($template) && file_exists($template)) {
             return new FileStorage($template);
         }
-        
+
         $file = null;
         $previous = null;
         try {
-            $file = $this->parser->parse($template);
+            $template = $this->parser->parse($template);
             try {
-                $file = $this->locator->locate($file);
+                $file = $this->locator->locate($template);
             } catch (\InvalidArgumentException $e) {
                 $previous = $e;
             }
-        } catch (\InvalidArgumentException $e) {
-            $previous = $e;
+        } catch (\Exception $e) {
+            try {
+                $file = parent::findTemplate($template);
+            } catch (\Twig_Error_Loader $e) {
+                $previous = $e;
+            }
         }
 
-        return $file;
+        if (false === $file || null === $file) {
+            throw new \Twig_Error_Loader(sprintf('Unable to find template "%s".', $logicalName), -1, null, $previous);
+        }
+
+        return $this->cache[$logicalName] = $file;
     }
     
     // protected function findTemplate($template)
