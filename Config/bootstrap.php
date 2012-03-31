@@ -9,3 +9,8 @@ require dirname(__FILE__) . '/../Vendor/.composer/autoload.php';
 if (!defined('TWIG_CACHE_PATH')) {
 	define( 'TWIG_CACHE_PATH', TMP . 'twig' . DS .  'cache' );
 }
+
+// Configure Defaults extensions
+Configure::write('twig.extensions', array(
+    'TwigPlugin\Extension\BasicExtension'
+));

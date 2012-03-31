@@ -18,12 +18,12 @@ class FilesystemLoader extends \Twig_Loader_Filesystem
 {
     protected $cache = array();
     
-    public function __construct(TemplateNameParserInterface $parser, FileLocatorInterface $locator)
+    public function __construct(FileLocatorInterface $locator, TemplateNameParserInterface $parser)
     {
         parent::__construct(array());
 
-        $this->parser = $parser;
         $this->locator = $locator;
+        $this->parser = $parser;
     }
 
     public function findTemplate($template)
