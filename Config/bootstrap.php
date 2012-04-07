@@ -3,7 +3,11 @@
 // TwigPlugin bootstrap file
 //
 
-require dirname(__FILE__) . '/../Vendor/.composer/autoload.php';
+if (!defined('__DIR__')) {
+    define('__DIR__', dirname(__FILE__));
+}
+
+require __DIR__ . '/../Vendor/.composer/autoload.php';
 
 // Override in app/Config/bootstrap.php if needed.
 if (!defined('TWIG_CACHE_PATH')) {

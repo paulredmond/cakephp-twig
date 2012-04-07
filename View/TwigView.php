@@ -8,8 +8,8 @@
  * @author Paul Redmond <paulrredmond@gmail.com>
  * @link https://github.com/paulredmond/cakephp-twig Github
  * @link http://goredmonster.com/ Author
- * @package TwigPlugin
- * @subpackage TwigPlugin.View.Twig
+ * @package Twig
+ * @subpackage Twig.View.Twig
  * @license MIT
  */
 
@@ -141,12 +141,38 @@ class TwigView extends View
 
         $relative = str_replace($this->templatePaths, '', $viewFileName);
         $relative = ltrim($relative, '/');
+        $this->set('twig_error_layout', 'Twig:Layouts:error.twig');
 
-        $template = $this->TwigEnv->loadTemplate($relative);
-        $this->output = $template->render(array_merge($this->viewVars, array('_view' => $this)));
-        $this->hasRendered = true;
+        // Render
+        try {
+            $template = $this->TwigEnv->loadTemplate($relative);
+            $this->output = $template->render(array_merge($this->viewVars, array('_view' => $this)));
+            $this->hasRendered = true;
+        } catch(Twig_Error_Syntax $e) {
+            return $this->renderTwigException('Syntax', $e);
+        } catch(Twig_Error_Runtime $e) {
+            return $this->renderTwigException('Runtime', $e);
+        } catch(Twig_Error $e) {
+            return $this->renderTwigException('Twig', $e);
+        }
 
         return $this->output;
+    }
+
+    private function renderTwigException($type, Twig_Error $error, $file = 'error')
+    {
+        $e = $error;
+        $template = $this->TwigEnv->loadTemplate("Twig:Errors:{$file}.twig");
+
+        return $template->render(array(
+            'type' => $type,
+            'error' => array(
+                'message' => $e->getMessage(),
+                'file' => ltrim(str_replace(ROOT, '', $e->getFile()), DS),
+                'line' => $e->getLine(),
+            ),
+            'trace' => $e->getTrace(),
+        ));
     }
 
     /**
@@ -323,7 +349,7 @@ class TwigView extends View
         $type = 'TwigView: ' . $type;
         $this->viewVars['title_for_layout'] = $type;
         if ($this->debug == true) {
-            $this->plugin = 'TwigPlugin';
+            $this->plugin = 'Twig';
             echo $this->renderLayout($content, 'twig_exception');
             exit; # Important!
         } else {

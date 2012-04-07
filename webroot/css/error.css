@@ -1,0 +1,71 @@
+/* Error / Exception Style */
+
+
+body {
+    background: #fff url('../images/twig-logo.png') no-repeat top right;
+    font: 12px/1.5em "Helvetica", "Arial", "sans-serif";
+    color: #333;
+    width: 1000px;
+    margin: 2em auto;
+}
+
+
+
+.content > div {
+    padding: 10px 15px;
+}
+
+pre {
+    font-family: "Georgia";
+}
+
+.accessibly-hidden {
+    position: absolute;
+    left: -9999px;
+}
+
+.content {
+    background: rgba(238, 238, 238, 0.7);
+}
+
+.exception {
+    fonts-size: 14px;
+    color: #fff;
+    padding: 15px;
+    -webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    -ms-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
+    background: #555;
+}
+.exception h1 {
+    font-size: 20px;
+    line-height: 24px;
+}
+
+.exception .error-location {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.stacktrace {
+    border: 1px solid #999;
+    border-width: 0 1px 1px;
+    -webkit-border-radius: 0 0 10px 10px;
+    -moz-border-radius:  0 0 10px 10px;
+    -ms-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px;
+}
+
+.stacktrace ol {
+    color: #888;
+}
+
+.stacktrace strong {
+    color: #333;
+}
+
+.stacktrace li {
+    line-height: 1.75em;
+    margin: 0 0 0.5em;
+}

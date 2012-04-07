@@ -1,9 +1,44 @@
-{% block title %}<h2>{{ name }}</h2>{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block pageTitle %}{{ name|raw }}{% endblock pageTitle %}</title>
+    <link rel="stylesheet" type="text/css" href="/twig/css/error.css" />
+</head>
+<body>
 
-{% block body %}
-Doh!
-{% endblock %}
+<div class="content">
+    <div class="exception">
+        {% block title %}
+        <h1>{{ name|raw }}</h1>
+        {% endblock title %}
 
-{% block stacktrace %}
-{{ _view.element('exception_stack_trace') }}
-{% endblock %}
+        {% block error %}{% endblock %}
+    </div>
+
+
+    <div class="stacktrace">
+        {% block stacktrace %}
+        <h1>Stack Trace</h1>
+        <ol>
+            {% for i in trace %}
+            <li>at
+                <strong>
+                    <abbr title="{{ i.class}}">{{ i.class }}</abbr>
+                    {{ i.type }}{{ i.function }}
+                </strong>
+                ()
+                <br />
+                in {{ i.file }} at line {{ i.line }}
+            </li>
+            {% endfor %}
+        </ol>
+        {% endblock %}
+    </div>
+</div>
+
+<div class="copyright">
+    <p>Twig plugin for CakePHP2 by Paul Redmond. Twig <a href="http://twig.sensiolabs.org/images/twig-logo.png">logo</a> is &copy; 2010 Sensio Labs.</p>
+</div>
+
+</body>
+</html>
