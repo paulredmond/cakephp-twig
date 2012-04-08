@@ -62,45 +62,6 @@ class FilesystemLoader extends \Twig_Loader_Filesystem
         return $this->cache[$logicalName] = $file;
     }
     
-    // protected function findTemplate($template)
-    // {
-    //     if (isset($this->cache[$template])) {
-    //         return $this->cache[$template];
-    //     }
-    //     
-    //     if (strstr($template, ':')) {
-    //         $parts = explode(':', $template);
-    //         if ($parts[0] === 'App') {
-    //             $paths = App::path('View');
-    //         } else {
-    //             $paths = $this->View->getPaths($parts[0]);
-    //         }
-    //         
-    //         // Get rid of the first part
-    //         $parts = array_slice($parts, 1);
-    //         
-    //         $file = trim(implode(DS, $parts), DS);
-    //         $file = preg_replace('#\/{2,}#i', DS, $file);
-    // 
-    //         foreach ($paths as $path) {
-    //             $found = $path . 'Layouts' . DS . $file;
-    //             if (file_exists($found)){
-    //                 $this->_cache[$template] = $found;
-    //                 
-    //                 return $found;
-    //             }
-    //         }
-    //     } else {
-    //         foreach ($this->paths as $path) {
-    //             if (is_file($path . DS . $template)) {
-    //                 return $this->cache[$template] = $path . DS . $template;
-    //             }
-    //         }
-    //     }
-    //     
-    //     return $template;
-    // }
-    
     /**
      * Returns true if the file is an existing absolute path.
      *
