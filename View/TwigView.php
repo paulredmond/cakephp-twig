@@ -114,6 +114,7 @@ class TwigView extends View
             'cache' => Configure::read('Cache.disable') == true ? false : TWIG_CACHE_PATH,
             'debug' => $this->debug,
             'auto_reload' => $this->debug,
+            'autoescape' => true,
         ));
 
         # Initialize a lexer instance with configured settings.
@@ -137,24 +138,41 @@ class TwigView extends View
      */
     public function render($view = null, $layout = null)
     {
-        $viewFileName = $this->_getViewFileName($view);
+        if ($this->hasRendered) {
+            return true;
+        }
+        if (!$this->_helpersLoaded) {
+            $this->loadHelpers();
+        }
+        $this->output = null;
 
+        // Get the view filename and the relative path.
+        $viewFileName = $this->_getViewFileName($view);
         $relative = str_replace($this->templatePaths, '', $viewFileName);
         $relative = ltrim($relative, '/');
+
+        // Handy reference to this plugin's error layout.
         $this->set('twig_error_layout', 'Twig:Layouts:error.twig');
+
+        // @todo At the moment, not calling beforeLayout/afterLayout callbacks. Might break 3rd party helpers?
+        // @todo These are dispatched differently in CakePHP 2.1 -- support both 2.0x & 2.1x.
+        $this->Helpers->trigger('beforeRender', array($viewFileName));
 
         // Render
         try {
             $template = $this->TwigEnv->loadTemplate($relative);
             $this->output = $template->render(array_merge($this->viewVars, array('_view' => $this)));
             $this->hasRendered = true;
-        } catch(Twig_Error_Syntax $e) {
+        } catch (Twig_Error_Syntax $e) {
             return $this->renderTwigException('Syntax', $e);
-        } catch(Twig_Error_Runtime $e) {
+        } catch (Twig_Error_Runtime $e) {
             return $this->renderTwigException('Runtime', $e);
-        } catch(Twig_Error $e) {
+        } catch (Twig_Error $e) {
             return $this->renderTwigException('Twig', $e);
         }
+
+        // The only value this provides I guess is that $this->output is fully rendered at this point.
+        $this->Helpers->trigger('afterRender', array($viewFileName));
 
         return $this->output;
     }
