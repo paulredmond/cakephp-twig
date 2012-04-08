@@ -3,13 +3,16 @@
 <head>
     <title>{% block pageTitle %}{{ name|raw }}{% endblock pageTitle %}</title>
     <link rel="stylesheet" type="text/css" href="/twig/css/error.css" />
+    <script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
 </head>
 <body>
+
+<h1 class="error-type">{ {{ type|capitalize }} Error &mdash; Twig Plugin }</h1>
 
 <div class="content">
     <div class="exception">
         {% block title %}
-        <h1>{{ name|raw }}</h1>
+        <h2>{{ name|raw }}</h2>
         {% endblock title %}
 
         {% block error %}{% endblock %}
@@ -18,8 +21,8 @@
 
     <div class="stacktrace">
         {% block stacktrace %}
-        <h1>Stack Trace</h1>
-        <ol>
+        <h1>Stack Trace <a href="#" class="toggle">+</a></h1>
+        <ol id="stacktrace" class="accessibly-hide">
             {% for i in trace %}
             <li>at
                 <strong>
@@ -39,6 +42,10 @@
 <div class="copyright">
     <p>Twig plugin for CakePHP2 by Paul Redmond. Twig <a href="http://twig.sensiolabs.org/images/twig-logo.png">logo</a> is &copy; 2010 Sensio Labs.</p>
 </div>
+
+{% block footerScripts %}
+<script src="/twig/js/error.js"></script>
+{% endblock %}
 
 </body>
 </html>
