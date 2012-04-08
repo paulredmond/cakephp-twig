@@ -18,16 +18,17 @@
         {% block error %}{% endblock %}
     </div>
 
-
+{% block stacktrace %}
+    {% if trace|length > 0 %}
     <div class="stacktrace">
-        {% block stacktrace %}
+
         <h1>Stack Trace <a href="#" class="toggle">+</a></h1>
         <ol id="stacktrace" class="accessibly-hide">
             {% for i in trace %}
             <li>at
                 <strong>
-                    <abbr title="{{ i.class}}">{{ i.class }}</abbr>
-                    {{ i.type }}{{ i.function }}
+                    <abbr title="{{ i.class}}">{{ i.class|raw }}</abbr>
+                    {{ i.type|raw }}{{ i.function|raw }}
                 </strong>
                 ()
                 <br />
@@ -35,12 +36,13 @@
             </li>
             {% endfor %}
         </ol>
-        {% endblock %}
     </div>
+    {% endif %}
+{% endblock %}
 </div>
 
 <div class="copyright">
-    <p>Twig plugin for CakePHP2 by Paul Redmond. Twig <a href="http://twig.sensiolabs.org/images/twig-logo.png">logo</a> is &copy; 2010 Sensio Labs.</p>
+    <p><a href="https://github.com/paulredmond/cakephp-twig">Twig Plugin</a> for CakePHP2 by <a href="https://github.com/paulredmond">Paul Redmond</a>.</p>
 </div>
 
 {% block footerScripts %}

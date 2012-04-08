@@ -4,7 +4,7 @@
 body {
     /*background: #fff url('../images/twig-logo.png') no-repeat top right;*/
     font: 14px/1.5em "Helvetica", "Arial", "sans-serif";
-    color: #F9E5BD;
+    color: #352504;
     background: #FFDC68;
     width: 1000px;
     margin: 2em auto;
@@ -36,6 +36,7 @@ pre {
 }
 
 .content {
+    color: #F9E5BD;
     padding: 15px;
     /*background: rgba(238, 238, 238, 0.7);*/
     background: #A7321C;

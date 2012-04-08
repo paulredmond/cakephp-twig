@@ -9,6 +9,8 @@ if (!defined('__DIR__')) {
 
 require __DIR__ . '/../Vendor/.composer/autoload.php';
 
+Configure::write('Exception.renderer', 'TwigPlugin\\Exception\\ExceptionRenderer');
+
 // Override in app/Config/bootstrap.php if needed.
 if (!defined('TWIG_CACHE_PATH')) {
 	define( 'TWIG_CACHE_PATH', TMP . 'twig' . DS .  'cache' );

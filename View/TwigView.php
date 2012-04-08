@@ -30,7 +30,38 @@ use Symfony\Component\Config\FileLocator;
  */
 class TwigView extends View
 {
+    /**
+     * Array of paths where twig will look for templates.
+     */
+    protected $templatePaths = array();
 
+
+    /**
+     * TwigLoader
+     *
+     * Holds the Twig_Loader_Filesystem object.
+     * @var \TwigPlugin\Templating\Loader\FilesystemLoader
+     * @access protected
+     */
+    protected $TwigLoader;
+
+    /**
+     * TwigLexer object
+     *
+     * Allows custom syntax in templates for block delimiters.
+     *
+     * @var \Twig_Lexer
+     * @access protected
+     * @link http://www.twig-project.org/doc/recipes.html#customizing-the-syntax
+     */
+    protected $TwigLexer;
+
+    /**
+     * TwigEnv
+     *
+     * @var \Twig_Environment object.
+     */
+    protected $TwigEnv;
 
     /**
      * Default configuration options. Override array with Configure::write('Twig', array('ext' => 'twig'))
@@ -45,45 +76,16 @@ class TwigView extends View
         ),
     );
 
-
     /**
-     * Twig debug setting. Debugging is based on Configure::read('debug') value.
+     * Twig debug setting.
+     *
+     * Debugging is based on Configure::read('debug') value.
      */
     private $debug = false;
 
-
     /**
-     * Array of paths where twig will look for templates.
+     * {@inheritdoc}
      */
-    protected $templatePaths = array();
-
-
-    /**
-     * TwigLoader
-     *
-     * Holds the Twig_Loader_Filesystem object.
-     * @access protected
-     */
-    protected $TwigLoader;
-
-    /**
-     * TwigLexer object
-     *
-     * Allows custom syntax in templates for block delimiters.
-     *
-     * @access protected
-     * @link http://www.twig-project.org/doc/recipes.html#customizing-the-syntax
-     */
-    protected $TwigLexer;
-
-    /**
-     * TwigEnv
-     *
-     * The Twig_Environment object.
-     */
-    protected $TwigEnv;
-
-
     public function __construct($controller, $register = true)
     {
         parent::__construct($controller, $register);
@@ -96,7 +98,7 @@ class TwigView extends View
         $this->ext = substr($ext, 0, 1) == '.' ? $ext : ".{$ext}";
 
         // Paths for this request.
-        $this->templatePaths = $this->getPaths($this->plugin);
+        $this->templatePaths = $this->getPaths($controller->plugin);
 
         # Set up the Twig environment instance.
         $this->TwigLoader = new FilesystemLoader(
@@ -107,8 +109,17 @@ class TwigView extends View
             new TemplateNameParser
         );
 
-        // Paths used when parser/locator fall back to Twig_Loader_Filesystem class.
-        $this->TwigLoader->setPaths($this->templatePaths);
+        // Set valid paths for this request that actually exist on the filesystem.
+        foreach ($this->templatePaths as $path) {
+            try {
+                $this->TwigLoader->addPath($path);
+            } catch (Exception $e) {
+                // Skip this path, its configured in CakePHP, but doesn't actually exist.
+            }
+        }
+
+        // Really silly, but might as well update to only the paths that are valid.
+        $this->TwigLoader->locator->locator = new FileLocator($this->templatePaths);
 
         $this->TwigEnv = new Twig_Environment($this->TwigLoader, array(
             'cache' => Configure::read('Cache.disable') == true ? false : TWIG_CACHE_PATH,
@@ -132,9 +143,11 @@ class TwigView extends View
     }
 
     /**
-     * Main render method.
+     * Render -- single-pass rendering using Twig's template inheritance.
      *
-     * Totally broken right now.
+     * @param null $view View filename to render.
+     * @param null $layout Layout used to render the view. Twig inheritance used instead.
+     * @return bool|string Return the rendered output.
      */
     public function render($view = null, $layout = null)
     {
@@ -148,6 +161,11 @@ class TwigView extends View
 
         // Get the view filename and the relative path.
         $viewFileName = $this->_getViewFileName($view);
+
+        if (pathinfo($view, PATHINFO_EXTENSION) == 'ctp') {
+            return parent::render($view, $layout);
+        }
+
         $relative = str_replace($this->templatePaths, '', $viewFileName);
         $relative = ltrim($relative, '/');
 
@@ -177,6 +195,19 @@ class TwigView extends View
         return $this->output;
     }
 
+//    private function _getViewFileName()
+//    {
+//
+//    }
+
+    /**
+     * Render various Twig exception objects for developer feedback.
+     *
+     * @param $type Type of exception being rendered (ex. 'Syntax').
+     * @param Twig_Error $error Exception object
+     * @param string $file Exception view that will be used to render the exception in debug mode.
+     * @return string returns the rendered exception HTML.
+     */
     private function renderTwigException($type, Twig_Error $error, $file = 'error')
     {
         $e = $error;
@@ -191,169 +222,6 @@ class TwigView extends View
             ),
             'trace' => $e->getTrace(),
         ));
-    }
-
-    /**
-     * Override default View _render method.
-     * Uses Twig's exception handling for errors.
-     *
-     * @param $action file that is going to be rendered.
-     * @param $params Data for the view being rendered.
-     * @param $loadHelpers Whether or not to load helpers.
-     * @param $cached (default: false)  Whether or not to create a cache file. Only applies to .ctp files.
-     * @link http://api13.cakephp.org/class/view#method-View_render
-     */
-    public function _render($__view, $__data = array())
-    {
-        if (pathinfo($__view, PATHINFO_EXTENSION) == 'ctp') {
-            return parent::_render($__view, $__data);
-        }
-
-        list($file, $dir) = array(basename($__view), dirname($__view));
-        $relative = str_replace($this->TwigLoader->getPaths(), '', $__view);
-
-        # Set up helpers.
-        $loadedHelpers = array();
-        if ($this->helpers != false && $loadedHelpers === true) {
-            $loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
-            $helpers = array_keys($loadedHelpers);
-            $helperNames = array_map(array('Inflector', 'variable'), $helpers);
-
-            for ($i = count($helpers) - 1; $i >= 0; $i--) {
-                $name = $helperNames[$i];
-                $helper =& $loadedHelpers[$helpers[$i]];
-
-                if (!isset($___dataForView[$name])) {
-                    ${$name} =& $helper;
-                }
-                $this->loaded[$helperNames[$i]] =& $helper;
-                $this->{$helpers[$i]} =& $helper;
-            }
-            $this->_triggerHelpers('beforeRender');
-            unset($name, $loadedHelpers, $helpers, $i, $helperNames);
-        }
-
-        # Render template
-        ob_start();
-        $timeStart = microtime(true);
-
-        try {
-            $e_path = dirname(__FILE__) . DS . 'exceptions'; # View path to exceptions.
-            $params = array_merge($__data, (array)$this->loaded);
-            $params['this'] =& $this;
-            $template = $this->TwigEnv->loadTemplate($relative);
-            echo $template->render($params);
-            if ($this->debug == true && $this->settings['debug_comments'] == true) {
-                echo "\n<!-- Twig rendered {$file} in " . round(microtime(true) - $timeStart, 4) . "s -->";
-                echo "\n<!-- Path: {$__view} -->\n";
-            }
-        }
-        catch (Twig_SyntaxError $e) {
-            $this->_clearAllBuffers();
-            ob_start();
-            include($e_path . DS . 'syntax.ctp');
-            $this->_twigException('Syntax Error', ob_get_clean(), $action, $e);
-        }
-        catch (Twig_RuntimeError $e) {
-            $this->_clearAllBuffers();
-            ob_start();
-            include($e_path . DS . 'runtime.ctp');
-            $this->_twigException('Runtime Error', ob_get_clean(), $action, $e);
-        }
-        catch (RuntimeException $e) {
-            $this->_clearAllBuffers();
-            ob_start();
-            include($e_path . DS . 'runtime.ctp');
-            $this->_twigException('Runtime Error', ob_get_clean(), $action, $e);
-        }
-        catch (Twig_Error $e) {
-            $this->_clearAllBuffers();
-            ob_start();
-            include($e_path . DS . 'exception.ctp');
-            $this->_twigException('Error', ob_get_clean(), $__view, $e);
-        }
-
-        if ($loadedHelpers === true) {
-            $this->_triggerHelpers('afterRender');
-        }
-
-        return ob_get_clean();
-    }
-
-
-    /**
-     * Rework of default element method in Core.
-     * Allows for elements with $this->ext and the default .ctp extension
-     * like View::_render() method.
-     *
-     * Requires a little more work to find files now that the method
-     * is looping through extensions.
-     *
-     * @param string $name Name of the element minus the file extension.
-     * @param array $params Array of parameters to pass to the element.
-     * @return string Rendered element
-     * @access public
-     */
-    public function element($name, $params = array(), $loadHelpers = false)
-    {
-        $file = $plugin = $key = null;
-
-        if (isset($params['plugin'])) {
-            $plugin = $params['plugin'];
-        }
-
-        if (isset($this->plugin) && !$plugin) {
-            $plugin = $this->plugin;
-        }
-
-        if (isset($params['cache'])) {
-            $expires = '+1 day';
-
-            if (is_array($params['cache'])) {
-                $expires = $params['cache']['time'];
-                $key = Inflector::slug($params['cache']['key']);
-            } elseif ($params['cache'] !== true) {
-                $expires = $params['cache'];
-                $key = implode('_', array_keys($params));
-            }
-
-            if ($expires) {
-                $cacheFile = 'element_' . $key . '_' . $plugin . Inflector::slug($name);
-                $cache = cache('views' . DS . $cacheFile, null, $expires);
-
-                if (is_string($cache)) {
-                    return $cache;
-                }
-            }
-        }
-        $paths = $this->_paths($plugin);
-
-        $exts = array($this->ext);
-        if ($this->ext !== '.ctp') {
-            array_push($exts, '.ctp');
-        }
-
-        foreach ($exts as $ext) {
-            foreach ($paths as $path) {
-                if (file_exists($path . 'Elements' . DS . $name . $ext)) {
-                    $file = $path . 'Elements' . DS . $name . $ext;
-                    break;
-                }
-            }
-        }
-
-        if (is_file($file)) {
-            $params = array_merge_recursive($params, (array)$this->loaded);
-            $element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
-            if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
-                cache('views' . DS . $cacheFile, $element, $expires);
-            }
-            return $element;
-        }
-
-        if (Configure::read() > 0) {
-            return "Not Found: " . $file;
-        }
     }
 
     /**
@@ -372,19 +240,6 @@ class TwigView extends View
             exit; # Important!
         } else {
             $this->log("[$type]: " . $e->getMessage());
-        }
-    }
-
-
-    /**
-     * If an exception is thrown during rendering,
-     * this cheesy method ensures all buffers are cleared
-     * before outputting debugging info.
-     */
-    private function _clearAllBuffers()
-    {
-        foreach (ob_list_handlers() as $buffer) {
-            ob_end_clean();
         }
     }
 }
