@@ -5,7 +5,8 @@ body {
     /*background: #fff url('../images/twig-logo.png') no-repeat top right;*/
     font: 14px/1.5em "Helvetica", "Arial", "sans-serif";
     color: #352504;
-    background: #FFDC68;
+    /*background: #FFDC68;*/
+    background: #eee;
     width: 1000px;
     margin: 2em auto;
 }
