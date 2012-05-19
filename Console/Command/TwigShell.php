@@ -11,7 +11,7 @@ class TwigShell extends AppShell
     
     /**
      * Warmup templates.
-     * Used to match a templates logical name and the realpath.
+     * Used to match template logical name and the realpath.
      * 
      * Note: The TemplateMapper task is very rudimentary ATM, and could be improved later on.
      */
@@ -26,7 +26,7 @@ class TwigShell extends AppShell
         $this->out('Warming up template cache', 1);
         
         foreach ($paths as $group => $locations) {
-            // Sometimes this paths don't exist on the filesystem.
+            // Sometimes CakePHP's configured paths don't exist on the filesystem.
             $paths[$group] = $locations = $this->pruneLocations($locations);
 
             $finder = new Finder();
@@ -45,7 +45,7 @@ class TwigShell extends AppShell
     }
     
     /**
-     * Make a given path is valid, if not unset.
+     * Make sure a given path is valid, if not unset.
      * 
      * @param $locations (array) Array of paths to verify.
      * @return (array) Array of valid filesystem paths.

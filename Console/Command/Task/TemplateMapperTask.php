@@ -6,10 +6,9 @@ class TemplateMapperTask extends Shell
 {
     private $collection = array();
     
-    public function exectute(Finder $finder, $group, $locations)
+    public function exectute(Finder $finder, $group)
     {
-        foreach ($finder as $file)
-        {
+        foreach ($finder as $file) {
             
             $name = array();
             $name[] = $group;
