@@ -7,7 +7,7 @@ if (!defined('__DIR__')) {
     define('__DIR__', dirname(__FILE__));
 }
 
-require __DIR__ . '/../Vendor/.composer/autoload.php';
+require __DIR__ . '/../Vendor/autoload.php';
 
 Configure::write('Exception.renderer', 'TwigPlugin\\Exception\\ExceptionRenderer');
 
