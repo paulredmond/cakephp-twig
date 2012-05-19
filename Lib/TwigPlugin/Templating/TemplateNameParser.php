@@ -2,6 +2,7 @@
 
 namespace TwigPlugin\Templating;
 
+use Symfony\Component\Templating\TemplateReferenceInterface;
 use Symfony\Component\Templating\TemplateNameParser as BaseTemplateNameParser;
 
 class TemplateNameParser extends BaseTemplateNameParser

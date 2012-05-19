@@ -34,7 +34,7 @@ class FilesystemLoader extends \Twig_Loader_Filesystem
             return $this->cache[$logicalName];
         }
         
-        if (self::isAbsolutePath($template) && file_exists($template)) {
+        if (is_string($template) && self::isAbsolutePath($template) && file_exists($template)) {
             return new FileStorage($template);
         }
 
