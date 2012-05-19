@@ -11,6 +11,10 @@ class TemplateLocator implements FileLocatorInterface
     
     public function __construct(FileLocatorInterface $locator, \View $view)
     {
+        if (file_exists($cache = CACHE . '/templates.php')) {
+            $this->cache = require $cache;
+        }
+
         $this->locator = $locator;
         $this->view = $view;
     }

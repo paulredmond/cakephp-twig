@@ -17,6 +17,7 @@ use TwigPlugin\Extension\BasicExtension;
 use TwigPlugin\Templating\Loader\FilesystemLoader;
 use TwigPlugin\Templating\Loader\TemplateLocator;
 use TwigPlugin\Templating\TemplateNameParser;
+use TwigPlugin\Templating\TemplateReference;
 
 use Symfony\Component\Config\FileLocator;
 
@@ -110,6 +111,7 @@ class TwigView extends View
         );
 
         // Set valid paths for this request that actually exist on the filesystem.
+        // CakePHP has various paths that can be used, but might not exist in reality.
         foreach ($this->templatePaths as $path) {
             try {
                 $this->TwigLoader->addPath($path);
