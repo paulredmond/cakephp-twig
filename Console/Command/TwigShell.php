@@ -22,7 +22,7 @@ class TwigShell extends AppShell
             'App'       => App::path("View"),
             'Plugin'    => App::path('Plugin'),
         );
-        
+
         $this->out('Warming up template cache', 1);
         
         foreach ($paths as $group => $locations) {

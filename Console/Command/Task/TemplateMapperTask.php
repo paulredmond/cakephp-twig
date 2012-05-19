@@ -17,6 +17,12 @@ class TemplateMapperTask extends Shell
             
             switch ($group) {
                 case 'App':
+                    // Plugin overrides in app/View
+                    if (preg_match('/^(plugin)$/i', $rel[0])) {
+                        array_shift($rel);
+                        $name[0] = $rel[0];
+                        array_shift($rel);
+                    }
                     $name[] = $rel[0];
                     array_shift($rel);
                     $name[] = implode('/', $rel);
@@ -33,8 +39,10 @@ class TemplateMapperTask extends Shell
             }
             
             $name = implode(':', $name);
-            
-            $this->set($name, $file->getRealpath());
+
+            if (null === $this->get($name)) {
+                $this->set($name, $file->getRealpath());
+            }
         }
     }
     

@@ -186,7 +186,7 @@ class TwigView extends View
 
         // @todo At the moment, not calling beforeLayout/afterLayout callbacks. Might break 3rd party helpers?
         // @todo These are dispatched differently in CakePHP 2.1 -- support both 2.0x & 2.1x.
-        $this->Helpers->trigger('beforeRender', array($parsed->getLogicalName()));
+        $this->Helpers->trigger('beforeRender', array($parsed));
 
         // Render
         try {
@@ -202,7 +202,7 @@ class TwigView extends View
         }
 
         // The only value this provides I guess is that $this->output is fully rendered at this point.
-        $this->Helpers->trigger('afterRender', array($parsed->getLogicalName()));
+        $this->Helpers->trigger('afterRender', array($parsed));
 
         return $this->output;
     }
