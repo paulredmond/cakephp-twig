@@ -26,7 +26,11 @@ class TemplateNameParser extends BaseTemplateNameParser
         }
         
         $engine = array_pop($elements);
-        
+
+        if (empty($parts[0]) && strpos($name, ':') === 0) {
+            $parts[0] = 'App';
+        }
+
         $template = new TemplateReference($parts[0], $parts[1], implode('.', $elements), $engine);
         
         return $this->cache[$name] = $template;
