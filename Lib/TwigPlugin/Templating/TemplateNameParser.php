@@ -17,13 +17,13 @@ class TemplateNameParser extends BaseTemplateNameParser
         
         $parts = explode(':', $name);
         if (3 !== count($parts)) {
-            throw new \InvalidArgumentException(sprintf('Template name "%s" is not valid (format is "Plugin:Folder:template.engine")', $name));
+            throw new \InvalidArgumentException(sprintf('Template name "%s" is not valid (format is "Plugin:Folder:template.format.engine")', $name));
         }
         
         $elements = explode('.', $parts[2]);
 
         if (3 > count($elements)) {
-            throw new \InvalidArgumentException(sprintf('Template name "%s" is not valid (format is "Plugin:Folder:template.engine")', $name));
+            throw new \InvalidArgumentException(sprintf('Template name "%s" is not valid (format is "Plugin:Folder:template.format.engine")', $name));
         }
         
         $engine = array_pop($elements);
