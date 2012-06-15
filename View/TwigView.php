@@ -135,7 +135,7 @@ class TwigView extends View
         $this->TwigEnv->setLexer($this->TwigLexer);
 
         foreach ((array)Configure::read('twig.extensions') as $ext) {
-            $this->TwigEnv->addExtension(new $ext());
+            $this->TwigEnv->addExtension(new $ext($this));
         }
     }
 
