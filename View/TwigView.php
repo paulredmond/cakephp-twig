@@ -167,18 +167,9 @@ class TwigView extends View
             $parsed = false;
         }
 
-
-        // Fall back to conventional CakePHP values that might be passed to $view.
+        // Try to create a template reference based on the view object properties.
         if (false === $parsed) {
-            // Get the view filename and the relative path.
-            $viewFileName = $this->_getViewFileName($view);
-
-            if (pathinfo($view, PATHINFO_EXTENSION) == 'ctp') {
-                return parent::render($view, $layout);
-            }
-
-            $parsed = str_replace($this->templatePaths, '', $viewFileName);
-            $parsed = ltrim($parsed, '/');
+            $parsed = $this->_getViewFileName($view);
         }
 
         // Handy reference to this plugin's error layout.
@@ -207,10 +198,31 @@ class TwigView extends View
         return $this->output;
     }
 
-//    private function _getViewFileName()
-//    {
-//
-//    }
+    protected function _getViewFileName($name = null)
+    {
+        if ($name === null) {
+            $name = $this->view;
+        }
+
+        $name = str_replace('/', DS, $name);
+        $engine = str_replace('.', '', $this->ext);
+        $plugin = (null === $this->plugin) ? 'App' : $this->plugin;
+        $format = (null === $this->layoutPath) ? 'html' : $this->layoutPath;
+
+        // Gets a little dirty here :/
+        if (false === strpos($this->viewPath, DS)) {
+            $controller = $this->viewPath;
+        } else {
+            $tmp = explode(DS, $this->viewPath);
+            $controller = $tmp[0];
+        }
+
+        if (null !== $this->subDir) {
+            $controller .= '/' . $this->subDir;
+        }
+
+        return new TemplateReference($plugin, $controller, $name, $format, $engine);
+    }
 
     /**
      * Render various Twig exception objects for developer feedback.
@@ -223,7 +235,7 @@ class TwigView extends View
     private function renderTwigException($type, Twig_Error $error, $file = 'error')
     {
         $e = $error;
-        $template = $this->TwigEnv->loadTemplate("Twig:Errors:{$file}.twig");
+        $template = $this->TwigEnv->loadTemplate("Twig:Errors:{$file}.html.twig");
 
         return $template->render(array(
             'type' => $type,
