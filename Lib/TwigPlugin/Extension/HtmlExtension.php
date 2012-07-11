@@ -13,7 +13,6 @@ class HtmlExtension extends \Twig_Extension
     {
         \App::import('Helper', 'Html');
         $this->htmlHelper = new \HtmlHelper($view);
-        parent::__construct();
     }
 
     public function getFunctions()
