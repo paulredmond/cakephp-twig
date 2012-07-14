@@ -7,6 +7,7 @@ I've taken some liberties, such as >= PHP 5.3.x only, namespaces, and auto-loadi
 
 Instead of relying on 2-pass rendering, Twig plugin relies on the powerful ```extends``` construct of
 the Twig templating library.
+
 ----------
 
 ## Basics
