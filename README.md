@@ -14,7 +14,7 @@ the Twig templating library.
 Lastly, the plugin provides a console to find all .twig templates in an effort to cache file paths 
 and reduce filesystem lookups. The goal is to make template rendering faster.
 
-----------
+--------------------------------------------------
 
 ### Basics
 Templates can now extend views and layouts more elegantly using ```extends``` and ```block```:
