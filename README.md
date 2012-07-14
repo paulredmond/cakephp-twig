@@ -49,4 +49,11 @@ tries to reduce template helper updates when the underlying CakePHP API changes:
 {{ link_to('Link Text', '/', {'class': 'my-link'}) }}
 ```
 
+You can still you CakePHP helpers directly, but you have to either a) disable auto-escaping in the configuration,
+or b) use Twig's built-in ```|raw``` filter for helpers that produce HTML output:
+
+```
+{{ _view.Html.link('test', '/')|raw }}
+```
+
 *This is a stub, provide link to full template API*
