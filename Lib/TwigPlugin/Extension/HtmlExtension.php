@@ -24,6 +24,24 @@ class HtmlExtension extends \Twig_Extension
                     'is_safe'       => array('html'),
                 )
             ),
+            'url' => new \Twig_Function_Method($this, 'url',
+                array(
+                    'pre_escape'    => 'html',
+                    'is_safe'       => array('html'),
+                )
+            ),
+            'css' => new \Twig_Function_Method($this, 'css',
+                array(
+                    'pre_escape'    => 'html',
+                    'is_safe'       => array('html'),
+                )
+            ),
+            'script' => new \Twig_Function_Method($this, 'script',
+                array(
+                    'pre_escape'    => 'html',
+                    'is_safe'       => array('html'),
+                )
+            ),
         );
     }
 
@@ -39,6 +57,22 @@ class HtmlExtension extends \Twig_Extension
     public function linkTo($title, $url, $options = array(), $confirmMessage = false)
     {
         return $this->htmlHelper->link($title, $url, $options, $confirmMessage);
+    }
+
+    public function url($path, $full = false)
+    {
+        return $this->htmlHelper->url($path, $full);
+    }
+
+
+    public function script($url, $options = array())
+    {
+        return $this->htmlHelper->script($url, $options);
+    }
+
+    public function css($path, $rel = null, $options = array())
+    {
+        return $this->htmlHelper->css($path, $rel, $options);
     }
 
     public function getName()
