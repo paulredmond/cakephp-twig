@@ -38,22 +38,33 @@ Also use Symfony2-like syntax in controllers:
 return $this->render(':Articles:index.html.twig'); // Matches App/View/Articles/index.html.twig
 ```
 --------------------------------------------------
-
 ### Helpers
-
-The aim of the twig plugin is to provide a more consistent template API. While this plugin relies
-on the existing CakePHP helpers (which fit nicely within the CakePHP framework), the plugin
-tries to reduce template helper updates when the underlying CakePHP API changes:
-
-```
-{{ link_to('Link Text', '/', {'class': 'my-link'}) }}
-```
 
 You can still you CakePHP helpers directly, but you have to either a) disable auto-escaping in the configuration,
 or b) use Twig's built-in ```|raw``` filter for helpers that produce HTML output:
 
 ```
 {{ _view.Html.link('test', '/')|raw }}
+```
+--------------------------------------------------
+
+# Extensions
+
+Info about extensions will go here.
+
+*@todo Information about adding extensions once API has been created for that.*
+
+### HtmlExtension
+Wraps HtmlHelper::link() method:
+
+```
+{{ link('Link Text', '/', {'class': 'my-link'}) }}
+```
+
+Only return a link if not the current url with ```link_unless_current```:
+
+```
+{{ link_unless_current('Link Text', '/', {'class': 'my-link'}) }}
 ```
 
 *This is a stub, provide link to full template API*

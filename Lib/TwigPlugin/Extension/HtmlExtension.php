@@ -13,12 +13,20 @@ class HtmlExtension extends \Twig_Extension
     {
         \App::import('Helper', 'Html');
         $this->htmlHelper = new \HtmlHelper($view);
+        $this->request = $this->htmlHelper->request;
+        $this->response = $this->htmlHelper->response;
     }
 
     public function getFunctions()
     {
         return array(
-            'link_to' => new \Twig_Function_Method($this, 'linkTo',
+            'link' => new \Twig_Function_Method($this, 'link',
+                array(
+                    'pre_escape'    => 'html',
+                    'is_safe'       => array('html'),
+                )
+            ),
+            'link_unless_current' => new \Twig_Function_Method($this, 'linkUnlessCurrent',
                 array(
                     'pre_escape'    => 'html',
                     'is_safe'       => array('html'),
@@ -54,9 +62,21 @@ class HtmlExtension extends \Twig_Extension
      * @param bool $confirmMessage
      * @return string Html link.
      */
-    public function linkTo($title, $url, $options = array(), $confirmMessage = false)
+    public function link($title, $url, $options = array(), $confirmMessage = false)
     {
         return $this->htmlHelper->link($title, $url, $options, $confirmMessage);
+    }
+
+    public function linkUnlessCurrent($title, $url, $options = array(), $confirmMessage = false)
+    {
+        $current = false;
+        $expecting = $this->url($url);
+
+        if ($this->request->here === $expecting) {
+            return $title;
+        }
+
+        return $this->link($title, $url, $options, $confirmMessage);
     }
 
     public function url($path, $full = false)
