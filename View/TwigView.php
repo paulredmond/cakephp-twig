@@ -173,7 +173,7 @@ class TwigView extends View
         }
 
         // Handy reference to this plugin's error layout.
-        $this->set('twig_error_layout', 'Twig:Layouts:error.twig');
+        $this->set('twig_error_layout', 'Twig:Layouts:error.html.twig');
 
         // @todo At the moment, not calling beforeLayout/afterLayout callbacks. Might break 3rd party helpers?
         // @todo These are dispatched differently in CakePHP 2.1 -- support both 2.0x & 2.1x.
