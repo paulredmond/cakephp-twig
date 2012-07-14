@@ -3,10 +3,16 @@
 *This is still a work in progress*
 
 This Twig plugin replaces the CakePHP2 view renderer with conventions more familiar to Symfony2.
-I've taken some liberties, such as >= PHP 5.3.x only, namespaces, and auto-loading.
+I've taken some liberties, such as PHP 5.3 only, namespaces, and autoloading for the plugin's classes.
 
-Instead of relying on 2-pass rendering, Twig plugin relies on the powerful ```extends``` construct of
+The plugin provides a custom set of classes such as ```TemplateNameParser``` and ```TemplateReference``` to parse and reference views.
+The ```FileSystemLoader``` class is also helpful in locating view templates.
+
+Instead of relying on 2-pass rendering, Twig plugin relies on the powerful ```extends``` tag of
 the Twig templating library.
+
+Lastly, the plugin provides a console to find all .twig templates in an effort to cache file paths 
+and reduce filesystem lookups. The goal is to make template rendering faster.
 
 ----------
 
