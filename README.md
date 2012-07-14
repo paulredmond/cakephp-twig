@@ -10,7 +10,7 @@ the Twig templating library.
 
 ----------
 
-## Basics
+### Basics
 Templates can now extend views and layouts more elegantly using ```extends``` and ```block```:
 
 ```
@@ -33,7 +33,7 @@ return $this->render(':Articles:index.html.twig'); // Matches App/View/Articles/
 ```
 --------------------------------------------------
 
-## Helpers
+### Helpers
 
 The aim of the twig plugin is to provide a more consistent template API. While this plugin relies
 on the existing CakePHP helpers (which fit nicely within the CakePHP framework), the plugin
