@@ -76,7 +76,7 @@ class HtmlExtension extends \Twig_Extension
             return $title;
         }
 
-        return $this->link($title, $url, $options, $confirmMessage);
+        return $this->link($title, $expecting, $options, $confirmMessage);
     }
 
     public function url($path, $full = false)
