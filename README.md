@@ -54,6 +54,7 @@ Configure the application ```Controller::$view``` property:
 // Preferably in AppController.php - Application-wide Twig views.
 
 public $viewClass = 'Twig.Twig';
+```
 
 Additionally, you can configure the path in ```app/Config/core.php``` if you'd like:
 
