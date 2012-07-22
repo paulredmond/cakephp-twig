@@ -37,6 +37,23 @@ CakePlugin::load('Twig', array('bootstrap' => true));
 ```
 **You must bootstrap this plugin.**
 
+Twig caches templates, therefore, you need to add this folder and give apache write permissions for this path:
+
+```bash
+cd path/to/app
+mkdir -p tmp/twig/cache
+```
+
+Additionally, you can configure the path in ```app/Config/core.php``` if you'd like:
+
+```php
+if (!defined('TWIG_CACHE_PATH')) {
+    define('TWIG_CACHE_PATH', '/path/to/twig/cache');
+}
+```
+
+--------------------------------------------------
+
 ### Basics
 Templates can now extend views and layouts more elegantly using ```extends``` and ```block```:
 
@@ -59,6 +76,7 @@ Also use Symfony2-like syntax in controllers:
 return $this->render(':Articles:index.html.twig'); // Matches App/View/Articles/index.html.twig
 ```
 --------------------------------------------------
+
 ### Helpers
 
 You can still you CakePHP helpers directly, but you have to either a) disable auto-escaping in the configuration,
