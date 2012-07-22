@@ -17,7 +17,10 @@ if (!defined('TWIG_CACHE_PATH')) {
 }
 
 // Configure Defaults extensions
-Configure::write('twig.extensions', array(
-    'TwigPlugin\Extension\BasicExtension',
-    'TwigPlugin\Extension\HtmlExtension',
+Configure::write('twig.extensions', array_merge(
+    (array) Configure::read('twig.extensions'),
+    array(
+        'TwigPlugin\Extension\BasicExtension',
+        'TwigPlugin\Extension\HtmlExtension',
+    )
 ));
