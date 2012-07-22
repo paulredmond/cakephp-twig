@@ -16,10 +16,31 @@ and reduce filesystem lookups. The goal is to make template rendering faster.
 
 --------------------------------------------------
 
+### Installation
+
+@todo - Provide application vendor installation instructions using composer.
+
+CakePHP 2 plugin supports [Composer](https://github.com/composer/composer) and [Packagist](http://packagist.org/). [Download composer.phar](http://packagist.org/) and put it in your path.
+
+From the ```app/Plugin``` folder run the following:
+
+```bash
+git clone https://github.com/paulredmond/cakephp-twig.git Twig
+cd ./Twig
+php composer.phar install
+```
+
+Boostrap the plugin in ```app/Config/bootstrap.php```:
+
+```php
+CakePlugin::load('Twig', array('bootstrap' => true));
+```
+**You must bootstrap this plugin.**
+
 ### Basics
 Templates can now extend views and layouts more elegantly using ```extends``` and ```block```:
 
-```
+```php
 {% extends 'App:Layouts:default.html.twig' %}
 
 {% block content %}
