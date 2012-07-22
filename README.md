@@ -33,6 +33,8 @@ php composer.phar install
 Boostrap the plugin in ```app/Config/bootstrap.php```:
 
 ```php
+<?php
+
 CakePlugin::load('Twig', array('bootstrap' => true));
 ```
 **You must bootstrap this plugin.**
@@ -47,6 +49,8 @@ mkdir -p tmp/twig/cache
 Additionally, you can configure the path in ```app/Config/core.php``` if you'd like:
 
 ```php
+<?php
+
 if (!defined('TWIG_CACHE_PATH')) {
     define('TWIG_CACHE_PATH', '/path/to/twig/cache');
 }
