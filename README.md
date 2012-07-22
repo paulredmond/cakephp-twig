@@ -46,6 +46,15 @@ cd path/to/app
 mkdir -p tmp/twig/cache
 ```
 
+Configure the application ```Controller::$view``` property:
+
+```php
+<?php
+
+// Preferably in AppController.php - Application-wide Twig views.
+
+public $viewClass = 'Twig.Twig';
+
 Additionally, you can configure the path in ```app/Config/core.php``` if you'd like:
 
 ```php
@@ -93,10 +102,25 @@ or b) use Twig's built-in ```|raw``` filter for helpers that produce HTML output
 
 # Extensions
 
-Info about extensions will go here.
+Familiarize yourself with Twig's [extension API](http://twig.sensiolabs.org/doc/advanced.html), and specifically [Creating an Extension](http://twig.sensiolabs.org/doc/advanced.html#creating-an-extension). You can also view pre-installed extensions that come with this plugin at Lib/TwigPlugin/Extension in this project for a few examples.
 
-*@todo Information about adding extensions once API has been created for that.*
+You can add extensions in core.php like so:
 
+```php
+<?php
+
+Configure::write('twig.extensions', array(
+    'NameSpace\Of\Autoloaded\Class', // Autoloaded class
+    new MyExtension(), // Instance
+));
+```
+*Note:* _You are responsible for autoloading exentions or creating an instance. This might change in the future, as CakePHP 2.1 does provide an Event layer._
+
+## Pre-Configured extensions
+
+This plugin provides template extensions for commonly used view layer functions.
+
+@ todo - move the following section to the docs.
 ### HtmlExtension
 Wraps HtmlHelper::link() method:
 
