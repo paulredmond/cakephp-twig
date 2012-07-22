@@ -1,7 +1,7 @@
 
 {
     "name": "paulredmond/twigplugin",
-    "description": "Twig plugin for CakePHP 2.0",
+    "description": "Twig plugin for CakePHP 2",
     "keywords": ["plugin", "cakephp", "view"],
     "homepage": "https://github.com/paulredmond/cakephp-twig",
     "version": "2.0.0",
@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "twig/twig": "1.6.0",
+        "twig/twig": "1.9.0",
         "symfony/templating": "2.0.12",
         "symfony/config": "2.0.12",
         "symfony/finder": "2.0.13"
