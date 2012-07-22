@@ -37,14 +37,7 @@ Boostrap the plugin in ```app/Config/bootstrap.php```:
 
 CakePlugin::load('Twig', array('bootstrap' => true));
 ```
-**You must bootstrap this plugin.**
-
-Twig caches templates, therefore, you need to add this folder and give apache write permissions for this path:
-
-```bash
-cd path/to/app
-mkdir -p tmp/twig/cache
-```
+**Note:** _You must bootstrap this plugin._
 
 Configure the application ```Controller::$view``` property:
 
@@ -54,6 +47,13 @@ Configure the application ```Controller::$view``` property:
 // Preferably in AppController.php - Application-wide Twig views.
 
 public $viewClass = 'Twig.Twig';
+```
+
+Twig caches templates, therefore, you need to add this folder and give apache write permissions for this path:
+
+```bash
+cd path/to/app
+mkdir -p tmp/twig/cache
 ```
 
 Additionally, you can configure the path in ```app/Config/core.php``` if you'd like:
