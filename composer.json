@@ -1,6 +1,6 @@
 
 {
-    "name": "paulredmond/twigplugin",
+    "name": "paulredmond/cakephp-twig",
     "description": "Twig plugin for CakePHP 2",
     "keywords": ["plugin", "cakephp", "view"],
     "homepage": "https://github.com/paulredmond/cakephp-twig",
