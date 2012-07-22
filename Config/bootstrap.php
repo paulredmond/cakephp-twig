@@ -22,5 +22,6 @@ Configure::write('twig.extensions', array_merge(
     array(
         'TwigPlugin\Extension\BasicExtension',
         'TwigPlugin\Extension\HtmlExtension',
+        'TwigPlugin\Extension\FormExtension',
     )
 ));
