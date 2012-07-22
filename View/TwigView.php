@@ -247,23 +247,4 @@ class TwigView extends View
             'trace' => $e->getTrace(),
         ));
     }
-
-    /**
-     * Output Twig exceptions
-     *
-     * Outputs exceptions raised by Twig using the default layout.
-     * If debugging is disabled, alternatively logs the exception.
-     */
-    private function _twigException($type, $content, $filename, Exception $e)
-    {
-        $type = 'TwigView: ' . $type;
-        $this->viewVars['title_for_layout'] = $type;
-        if ($this->debug == true) {
-            $this->plugin = 'Twig';
-            echo $this->renderLayout($content, 'twig_exception');
-            exit; # Important!
-        } else {
-            $this->log("[$type]: " . $e->getMessage());
-        }
-    }
 }
