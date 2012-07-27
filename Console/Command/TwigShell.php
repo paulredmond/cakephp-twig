@@ -52,8 +52,7 @@ class TwigShell extends AppShell
      */
     private function pruneLocations(array $locations = array())
     {
-        foreach ($locations as $k => $path)
-        {
+        foreach ($locations as $k => $path) {
             if (!is_dir($path)) {
                 unset($locations[$k]);
             }
