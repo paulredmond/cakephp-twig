@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block pageTitle %}{{ name|raw }}{% endblock pageTitle %}</title>
+    <link rel="stylesheet" type="text/css" href="/twig/css/error.css" />
+    <script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
+</head>
+<body>
+
+<h1 class="error-type">{ {{ type|capitalize }} Error &mdash; Twig Plugin }</h1>
+
+<div class="content">
+    <div class="exception">
+        {% block title %}
+        <h2>{{ name|raw }}</h2>
+        {% endblock title %}
+
+        {% block error %}{% endblock %}
+    </div>
+
+{% block stacktrace %}
+    {% if trace|length > 0 %}
+    <div class="stacktrace">
+
+        <h1>Stack Trace <a href="#" class="toggle">+</a></h1>
+        <ol id="stacktrace" class="accessibly-hide">
+            {% for i in trace %}
+            <li>at
+                <strong>
+                    <abbr title="{{ i.class}}">{{ i.class|raw }}</abbr>
+                    {{ i.type|raw }}{{ i.function|raw }}
+                </strong>
+                ()
+                <br />
+                in {{ i.file }} at line {{ i.line }}
+            </li>
+            {% endfor %}
+        </ol>
+    </div>
+    {% endif %}
+{% endblock %}
+</div>
+
+<div class="copyright">
+    <p><a href="https://github.com/paulredmond/cakephp-twig">Twig Plugin</a> for CakePHP2 by <a href="https://github.com/paulredmond">Paul Redmond</a>.</p>
+</div>
+
+{% block footerScripts %}
+<script src="/twig/js/error.js"></script>
+{% endblock %}
+
+</body>
+</html>

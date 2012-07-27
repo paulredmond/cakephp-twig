@@ -1,0 +1,13 @@
+{% extends 'Twig:Layouts:error.html.twig' %}
+
+{% block pageTitle %}{{ type|capitalize }} Error | {{ error.message }}{% endblock %}
+
+{% block title %}
+<h2>{{ error.message }}</h2>
+{% endblock %}
+
+{% block error %}
+<div class="error-location">
+    <p>{{ error.file }}, Line: {{ error.line }}</p>
+</div>
+{% endblock %}

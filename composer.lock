@@ -1,0 +1,29 @@
+{
+    "hash": "c1740f9dcda46e638573e54fda5ae9cb",
+    "packages": [
+        {
+            "package": "symfony/config",
+            "version": "v2.0.12"
+        },
+        {
+            "package": "symfony/finder",
+            "version": "v2.0.13"
+        },
+        {
+            "package": "symfony/templating",
+            "version": "v2.0.12"
+        },
+        {
+            "package": "twig/twig",
+            "version": "v1.9.0"
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": [
+
+    ]
+}
