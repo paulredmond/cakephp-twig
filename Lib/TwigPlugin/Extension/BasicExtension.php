@@ -1,4 +1,7 @@
 <?php
+
+namespace TwigPlugin\Extension;
+
 /**
  * CakePHP Basic functions
  *
@@ -10,7 +13,7 @@
  *
  * @author Hiroshi Hoaki <rewish.org@gmail.com>
  */
-class Twig_Extension_Basic extends Twig_Extension
+class BasicExtension extends \Twig_Extension
 {
     /**
      * Returns a list of filters to add to the existing list.
@@ -20,11 +23,11 @@ class Twig_Extension_Basic extends Twig_Extension
     public function getFilters()
     {
         return array(
-            'debug' => new Twig_Filter_Function('debug'),
-            'pr'    => new Twig_Filter_Function('pr'),
-            'low'   => new Twig_Filter_Function('low'),
-            'up'    => new Twig_Filter_Function('up'),
-            'env'   => new Twig_Filter_Function('env'),
+            'debug' => new \Twig_Filter_Function('debug'),
+            'pr'    => new \Twig_Filter_Function('pr'),
+            'low'   => new \Twig_Filter_Function('low'),
+            'up'    => new \Twig_Filter_Function('up'),
+            'env'   => new \Twig_Filter_Function('env'),
         );
     }
 
