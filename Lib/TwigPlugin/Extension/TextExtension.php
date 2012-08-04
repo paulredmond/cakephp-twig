@@ -35,7 +35,7 @@ class TextExtension extends \Twig_Extension
      * @param $length   Integer Length to truncate.
      * @param $options  Array   Options
      *
-     * Default options: 'ending' => '...', 'extact' => true, 'html' => false
+     * Default options: 'ending' => '...', 'exact' => true, 'html' => false
      *
      * Set 'html' option to true if you want truncate
      * to handle HTML in the string correctly.
