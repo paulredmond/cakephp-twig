@@ -28,7 +28,7 @@ Prints out debug information about given variable.
 
 #### pr
 
-print_r convenience filter
+A convenience filter for PHP's `print_r` function.
 
 ```
 {{ myVar|pr }}
