@@ -34,3 +34,7 @@ A convenience filter for PHP's `print_r` function.
 {{ myVar|pr }}
 ```
 
+--------------------------------------------------
+
+View the Twig plugin [extension index](index.md).
+Back to [index](../index.md).
