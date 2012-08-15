@@ -13,7 +13,7 @@ IIS, or SCRIPT_NAME in CGI mode).  Also exposes some additional custom
 environment information.
 
 ```
-{{env('HTTP_HOST')}}
+{{ env('HTTP_HOST') }}
 ```
 
 ## Filters
