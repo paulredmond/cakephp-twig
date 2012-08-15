@@ -14,6 +14,7 @@ environment information.
 
 ```
 {{env('HTTP_HOST')}}
+```
 
 ## Filters
 
@@ -22,7 +23,7 @@ environment information.
 Prints out debug information about given variable.
 
 ```
-{{$myVar|debug}}
+{{ myVar|debug }}
 ```
 
 ### pr
@@ -30,6 +31,6 @@ Prints out debug information about given variable.
 print_r convenience filter
 
 ```
-{{$myVar|pr}}
+{{ myVar|pr }}
 ```
 
