@@ -12,7 +12,7 @@ for unsupported or inconsistent environment variables (i.e. DOCUMENT_ROOT on
 IIS, or SCRIPT_NAME in CGI mode).  Also exposes some additional custom
 environment information.
 
-```
+```jinja
 {{ env('HTTP_HOST') }}
 ```
 
@@ -22,7 +22,7 @@ environment information.
 
 Prints out debug information about given variable.
 
-```
+```jinja
 {{ myVar|debug }}
 ```
 
@@ -30,7 +30,7 @@ Prints out debug information about given variable.
 
 A convenience filter for PHP's `print_r` function.
 
-```
+```jinja
 {{ myVar|pr }}
 ```
 
