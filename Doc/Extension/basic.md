@@ -5,7 +5,7 @@ This extension wraps useful functions defined in (basics.php)[http://api.cakephp
 
 ## Functions
 
-### env
+#### env
 
 Gets an environment variable from available sources, and provides emulation
 for unsupported or inconsistent environment variables (i.e. DOCUMENT_ROOT on
@@ -18,7 +18,7 @@ environment information.
 
 ## Filters
 
-### Debug
+#### debug
 
 Prints out debug information about given variable.
 
@@ -26,7 +26,7 @@ Prints out debug information about given variable.
 {{ myVar|debug }}
 ```
 
-### pr
+#### pr
 
 print_r convenience filter
 
