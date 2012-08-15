@@ -1,7 +1,7 @@
 BasicExtension API
 ==================================================
 
-This extension wraps useful functions defined in (basics.php)[http://api.cakephp.org/file/Cake/basics.php].
+This extension wraps useful functions defined in [basics.php](http://api.cakephp.org/file/Cake/basics.php).
 
 ## Functions
 
