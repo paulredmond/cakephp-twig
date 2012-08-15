@@ -36,5 +36,4 @@ A convenience filter for PHP's `print_r` function.
 
 --------------------------------------------------
 
-View the Twig plugin [extension index](index.md).
-Back to [index](../index.md).
+View the Twig plugin [extension index](index.md) or go to the [documentation index](../index.md).
