@@ -7,14 +7,20 @@ namespace TwigPlugin\Extension;
  *
  * Use: {{ user|debug }}
  * Use: {{ user|pr }}
- * Use: {{ 'FOO'|low }}
- * Use: {{ 'foo'|up }}
- * Use: {{ 'HTTP_HOST'|env }}
+ * Use: {{ env('HTTP_HOST') }}
  *
  * @author Hiroshi Hoaki <rewish.org@gmail.com>
  */
 class BasicExtension extends \Twig_Extension
 {
+
+    public function getFunctions()
+    {
+        return array(
+            'env'   => new \Twig_Function_Function('env'),
+        );
+    }
+
     /**
      * Returns a list of filters to add to the existing list.
      *
@@ -25,9 +31,6 @@ class BasicExtension extends \Twig_Extension
         return array(
             'debug' => new \Twig_Filter_Function('debug'),
             'pr'    => new \Twig_Filter_Function('pr'),
-            'low'   => new \Twig_Filter_Function('low'),
-            'up'    => new \Twig_Filter_Function('up'),
-            'env'   => new \Twig_Filter_Function('env'),
         );
     }
 
