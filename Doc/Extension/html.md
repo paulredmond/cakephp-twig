@@ -61,3 +61,7 @@ As an array:
 ```jinja
 {{ script(['jquery', 'jquery-ui']) }}
 ```
+
+--------------------------------------------------
+
+Go to the Twig plugin [extension index](index.md) or [docs home](../index.md).
