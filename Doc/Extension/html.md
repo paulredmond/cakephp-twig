@@ -5,8 +5,8 @@ HtmlExtension
 
 #### link
 
-Create an HTML link. Arguments are the same as the [CakePHP Helper](http://api.cakephp
-.org/class/html-helper#method-HtmlHelperlink).
+Create an HTML link. Arguments are the same as the [HtmlHelper::link()](http://api.cakephp
+.org/class/html-helper#method-HtmlHelperlink) method.
 
 ```jinja
 {{ link('Title', {'controller': 'articles', 'action': 'index'}, {'class': 'article'}, false) }}
