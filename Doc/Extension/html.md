@@ -1,6 +1,8 @@
 HtmlExtension
 =============================================
 
+This extension wraps method found in the [HtmlHelper](http://api.cakephp.org/class/html-helper) class.
+
 ## Functions
 
 #### link
