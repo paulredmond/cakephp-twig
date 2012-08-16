@@ -12,6 +12,8 @@ Create an HTML link. Arguments are the same as the [CakePHP Helper](http://api.c
 {{ link('Title', {'controller': 'articles', 'action': 'index'}, {'class': 'article'}, false) }}
 ```
 
+--------------------------------------------------
+
 #### link_unless_current
 
 Same options as `link`, but will only return the title if the current page matches the link.
@@ -19,6 +21,8 @@ Same options as `link`, but will only return the title if the current page match
 ```jinja
 {{ link_unless_current('Title', '/link', {}) }}
 ```
+
+--------------------------------------------------
 
 #### url
 
@@ -29,6 +33,8 @@ Find a url for a specified action. The `url` function has the same arguments as 
 {{ url({'controller': 'articles, 'action': 'index'}, true) }}
 ```
 
+--------------------------------------------------
+
 #### css
 
 Creates a link element for CSS stylesheets. Arguments are the same as [HtmlHelper::css()](http://api.cakephp
@@ -38,6 +44,8 @@ Creates a link element for CSS stylesheets. Arguments are the same as [HtmlHelpe
 {{ css('mystyle') }}
 {# Path will be /css/mystyle.css #}
 ```
+
+--------------------------------------------------
 
 #### script
 
