@@ -17,3 +17,7 @@ View [Installing the plugin](installation.md).
  * [HtmlExtension](Extension/html.md)
  * [FormExtension](Extension/form.md)
  * [TextExtension](Extension/text.md)
+
+ ## Recipes
+
+ View the [recipes directory](Recipes/).
