@@ -33,6 +33,8 @@ Highlights the needle text using formatting options.
 See the [TextHelper::highlight()](http://api.cakephp.org/class/text-helper#method-TextHelperhighlight) method for
 arguments.
 
+--------------------------------------------------
+
 #### autoLink
 
 Convert all links and email addresses to HTML links.
