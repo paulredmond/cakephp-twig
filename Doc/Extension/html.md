@@ -32,7 +32,7 @@ Find a url for a specified action. The `url` function has the same arguments as 
 .org/class/helper#method-Helperurl). Pass `true` as the second argument for a full base url.
 
 ```jinja
-{{ url({'controller': 'articles, 'action': 'index'}, true) }}
+{{ url({'controller': 'articles', 'action': 'index'}, true) }}
 ```
 
 --------------------------------------------------
