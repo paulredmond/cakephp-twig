@@ -18,6 +18,6 @@ View [Installing the plugin](installation.md).
  * [FormExtension](Extension/form.md)
  * [TextExtension](Extension/text.md)
 
- ## Recipes
+## Recipes
 
  View the [recipes directory](Recipes/).
