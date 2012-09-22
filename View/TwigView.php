@@ -68,7 +68,7 @@ class TwigView extends View
      * Default configuration options. Override array with Configure::write('Twig', array('ext' => 'twig'))
      */
     private $defaults = array(
-        'ext' => '.twig',
+        'ext' => '.html.twig',
         'debug_comments' => 'true', # only matters if Configure::read('debug') value > 0
         'lexer' => array(
             'tag_comment' => array('{#', '#}'),
@@ -177,12 +177,38 @@ class TwigView extends View
         // @todo At the moment, not calling beforeLayout/afterLayout callbacks. Might break 3rd party helpers?
         // @todo These are dispatched differently in CakePHP 2.1 -- support both 2.0x & 2.1x.
         $this->Helpers->trigger('beforeRender', array($parsed));
+        $this->output = $this->_render($parsed);
+        // The only value this provides I guess is that $this->output is fully rendered at this point.
+        $this->Helpers->trigger('afterRender', array($parsed));
 
-        // Render
+        if ($layout === null) {
+            $layout = $this->layout;
+        }
+
+        // Render layout if the view is a .ctp file...otherwise, twig {% extends %} has already taken care of this.
+        if ($layout && $this->autoLayout && pathinfo($parsed, PATHINFO_EXTENSION) === 'ctp') {
+            $this->output = $this->renderLayout($this->output, $layout);
+        }
+
+        $this->hasRendered = true;
+
+        return $this->output;
+    }
+
+    protected function _render($view, $data = array())
+    {
+        if (empty($data)) {
+            $data = $this->viewVars;
+        }
+
+        if (pathinfo($view, PATHINFO_EXTENSION) === 'ctp') {
+            return parent::_render($view, $data);
+        }
+
+        // Render twig
         try {
-            $template = $this->TwigEnv->loadTemplate($parsed);
-            $this->output = $template->render(array_merge($this->viewVars, array('_view' => $this)));
-            $this->hasRendered = true;
+            $template = $this->TwigEnv->loadTemplate($view);
+            return $template->render(array_merge($data, array('_view' => $this)));
         } catch (Twig_Error_Syntax $e) {
             return $this->renderTwigException('Syntax', $e);
         } catch (Twig_Error_Runtime $e) {
@@ -190,15 +216,20 @@ class TwigView extends View
         } catch (Twig_Error $e) {
             return $this->renderTwigException('Twig', $e);
         }
-
-        // The only value this provides I guess is that $this->output is fully rendered at this point.
-        $this->Helpers->trigger('afterRender', array($parsed));
-
-        return $this->output;
     }
 
+    /**
+     * @param null $name
+     * @return Mixed - path to file, or a template reference for twig files.
+     */
     protected function _getViewFileName($name = null)
     {
+        $template = parent::_getViewFileName($name);
+
+        if (pathinfo($template, PATHINFO_EXTENSION) === 'ctp') {
+            return $template;
+        }
+
         if ($name === null) {
             $name = $this->view;
         }
