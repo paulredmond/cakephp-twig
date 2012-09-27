@@ -137,6 +137,8 @@ class TwigView extends View
         foreach ((array)Configure::read('twig.extensions') as $ext) {
             $this->TwigEnv->addExtension(is_object($ext) ? $ext : new $ext($this));
         }
+
+        $this->TwigEnv->addGlobal('view', $this);
     }
 
     public function getPaths($plugin = null)
@@ -208,7 +210,7 @@ class TwigView extends View
         // Render twig
         try {
             $template = $this->TwigEnv->loadTemplate($view);
-            return $template->render(array_merge($data, array('_view' => $this)));
+            return $template->render($data);
         } catch (Twig_Error_Syntax $e) {
             return $this->renderTwigException('Syntax', $e);
         } catch (Twig_Error_Runtime $e) {
