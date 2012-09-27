@@ -235,7 +235,7 @@ class TwigView extends View
         }
 
         $name = str_replace('/', DS, $name);
-        $engine = str_replace('.', '', $this->ext);
+        $engine = end(explode('.', $this->ext));
         $plugin = (null === $this->plugin) ? 'App' : $this->plugin;
         $format = (null === $this->layoutPath) ? 'html' : $this->layoutPath;
 
