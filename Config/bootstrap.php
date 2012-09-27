@@ -23,6 +23,7 @@ Configure::write('twig.extensions', array_merge(
         'TwigPlugin\Extension\HtmlExtension',
         'TwigPlugin\Extension\FormExtension',
         'TwigPlugin\Extension\TextExtension',
+        'TwigPlugin\Extension\ViewExtension',
     ),
     (array) Configure::read('twig.extensions')
 ));
