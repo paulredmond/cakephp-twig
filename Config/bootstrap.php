@@ -7,7 +7,9 @@ if (!defined('__DIR__')) {
     define('__DIR__', dirname(__FILE__));
 }
 
-Configure::write('Exception.renderer', 'TwigPlugin\\Exception\\ExceptionRenderer');
+if (!defined('TWIG_EXCEPTION_RENDERER')) {
+    Configure::write('Exception.renderer', 'TwigPlugin\\Exception\\ExceptionRenderer');
+}
 
 // Override in app/Config/bootstrap.php if needed.
 if (!defined('TWIG_CACHE_PATH')) {
