@@ -156,9 +156,8 @@ class TwigView extends View
         if ($this->hasRendered) {
             return true;
         }
-        if (!$this->_helpersLoaded) {
-            $this->loadHelpers();
-        }
+
+        $this->loadHelpers();
 
         try {
             $parsed = $this->TwigLoader->parser->parse($view);
