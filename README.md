@@ -81,6 +81,13 @@ if (!defined('TWIG_CACHE_PATH')) {
 }
 ```
 
+### Strict variables
+
+You can enable `strict_variables` mode using:
+```php
+Configure::write("Twig.strict_variables", true);
+```
+
 --------------------------------------------------
 
 ### Basics
