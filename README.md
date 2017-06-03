@@ -18,16 +18,31 @@ and reduce filesystem lookups. The goal is to make template rendering faster.
 
 ### Installation
 
-@todo - Provide application vendor installation instructions using composer.
 
 CakePHP 2 plugin supports [Composer](https://github.com/composer/composer) and [Packagist](http://packagist.org/). [Download composer.phar](http://packagist.org/) and put it in your path.
 
-From the ```app/Plugin``` folder run the following:
+Add following entries to your `composer.json`:
+```json
+"require": {
+    "paulredmond/cakephp-twig": "dev-develop"
+},
+"extra": {
+    "installer-paths": {
+        "app/Plugin/Twig/": ["type:cakephp-plugin"]
+    }
+},
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/kamilwylegala/cakephp-twig.git"
+    }
+],
+```
+@TODO: Add plugin to packagist,  figure out better plugin naming to avoid hardcoding path to `app/Plugin/Twig/` 
 
-```bash
-git clone https://github.com/paulredmond/cakephp-twig.git Twig
-cd ./Twig
-php composer.phar install
+Then:
+```sh
+$ php composer.phar update paulredmond/cakephp-twig
 ```
 
 Boostrap the plugin in ```app/Config/bootstrap.php```:
@@ -64,6 +79,13 @@ Additionally, you can configure the path in ```app/Config/core.php``` if you'd l
 if (!defined('TWIG_CACHE_PATH')) {
     define('TWIG_CACHE_PATH', '/path/to/twig/cache');
 }
+```
+
+### Strict variables
+
+You can enable `strict_variables` mode using:
+```php
+Configure::write("Twig.strict_variables", true);
 ```
 
 --------------------------------------------------

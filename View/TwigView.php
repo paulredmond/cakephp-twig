@@ -85,6 +85,11 @@ class TwigView extends View
     private $debug = false;
 
     /**
+     * @var array
+     */
+    private $settings;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct($controller, $register = true)
@@ -127,6 +132,7 @@ class TwigView extends View
             'cache' => Configure::read('Cache.disable') == true ? false : TWIG_CACHE_PATH,
             'debug' => $this->debug,
             'auto_reload' => $this->debug,
+            'strict_variables' => !!Configure::read("Twig.strict_variables"),
             'autoescape' => true,
         ));
 
@@ -156,9 +162,8 @@ class TwigView extends View
         if ($this->hasRendered) {
             return true;
         }
-        if (!$this->_helpersLoaded) {
-            $this->loadHelpers();
-        }
+
+        $this->loadHelpers();
 
         try {
             $parsed = $this->TwigLoader->parser->parse($view);
