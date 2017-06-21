@@ -49,7 +49,7 @@ Boostrap the plugin in ```app/Config/bootstrap.php```:
 
 ```php
 <?php
-
+Configure::write("Twig.exception_renderer", true); //print errors using plugin templates
 CakePlugin::load('Twig', array('bootstrap' => true));
 ```
 **Note:** _You must bootstrap this plugin._

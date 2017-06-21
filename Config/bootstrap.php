@@ -7,7 +7,7 @@ if (!defined('__DIR__')) {
     define('__DIR__', dirname(__FILE__));
 }
 
-if (!defined('TWIG_EXCEPTION_RENDERER')) {
+if (!!Configure::read("Twig.exception_renderer")) {
     Configure::write('Exception.renderer', 'TwigPlugin\\Exception\\ExceptionRenderer');
 }
 

@@ -188,12 +188,12 @@ class TwigView extends View
             $template = $this->TwigEnv->loadTemplate($parsed);
             $this->output = $template->render(array_merge($this->viewVars, array('_view' => $this)));
             $this->hasRendered = true;
-        } catch (Twig_Error_Syntax $e) {
-            return $this->renderTwigException('Syntax', $e);
-        } catch (Twig_Error_Runtime $e) {
-            return $this->renderTwigException('Runtime', $e);
         } catch (Twig_Error $e) {
-            return $this->renderTwigException('Twig', $e);
+            if (Configure::read("Twig.exception_renderer")) {
+                return $this->renderTwigException($e);
+            } else {
+                throw $e;
+            }
         }
 
         // The only value this provides I guess is that $this->output is fully rendered at this point.
@@ -231,18 +231,17 @@ class TwigView extends View
     /**
      * Render various Twig exception objects for developer feedback.
      *
-     * @param $type Type of exception being rendered (ex. 'Syntax').
      * @param Twig_Error $error Exception object
      * @param string $file Exception view that will be used to render the exception in debug mode.
      * @return string returns the rendered exception HTML.
      */
-    private function renderTwigException($type, Twig_Error $error, $file = 'error')
+    private function renderTwigException(Twig_Error $error, $file = 'error')
     {
         $e = $error;
         $template = $this->TwigEnv->loadTemplate("Twig:Errors:{$file}.html.twig");
 
         return $template->render(array(
-            'type' => $type,
+            'type' => "Twig",
             'error' => array(
                 'message' => $e->getMessage(),
                 'file' => ltrim(str_replace(ROOT, '', $e->getFile()), DS),
