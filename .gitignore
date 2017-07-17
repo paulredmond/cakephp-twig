@@ -1,2 +1,4 @@
 Vendor/
 composer.phar
+.idea/*
+vendor/*
