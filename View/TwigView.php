@@ -136,13 +136,14 @@ class TwigView extends View
             'autoescape' => true,
         ));
 
+        foreach ((array)Configure::read('twig.extensions') as $ext) {
+            $this->TwigEnv->addExtension(is_object($ext) ? $ext : new $ext($this));
+        }
+        
         # Initialize a lexer instance with configured settings.
         $this->TwigLexer = new Twig_Lexer($this->TwigEnv, $this->settings['lexer']);
         $this->TwigEnv->setLexer($this->TwigLexer);
 
-        foreach ((array)Configure::read('twig.extensions') as $ext) {
-            $this->TwigEnv->addExtension(is_object($ext) ? $ext : new $ext($this));
-        }
     }
 
     public function getPaths($plugin = null)
