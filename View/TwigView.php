@@ -117,9 +117,10 @@ class TwigView extends View
 
         // Set valid paths for this request that actually exist on the filesystem.
         // CakePHP has various paths that can be used, but might not exist in reality.
+        $namespace = Configure::read('twig.namespace');
         foreach ($this->templatePaths as $path) {
             try {
-                $this->TwigLoader->addPath($path);
+                $this->TwigLoader->addPath($path, $namespace);
             } catch (Exception $e) {
                 // Skip this path, its configured in CakePHP, but doesn't actually exist.
             }
