@@ -5,7 +5,6 @@ namespace TwigPlugin\Templating\Loader;
 use Symfony\Component\Templating\TemplateNameParserInterface;
 use Symfony\Component\Templating\Storage\FileStorage;
 use Symfony\Component\Config\FileLocatorInterface;
-use Symfony\Component\Config\FileLocator;
 
 use \App as App;
 use \Cache as Cache;
@@ -14,7 +13,7 @@ use \Cache as Cache;
  * Extends the default Twig filesystem loader
  * to work with CakePHP paths.
  */
-class FilesystemLoader extends \Twig_Loader_Filesystem
+class FilesystemLoader extends \Twig\Loader\FilesystemLoader
 {
     protected $cache = array();
     
