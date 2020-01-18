@@ -134,7 +134,7 @@ class TwigView extends View
             'debug' => $this->debug,
             'auto_reload' => $this->debug,
             'strict_variables' => !!Configure::read("Twig.strict_variables"),
-            'autoescape' => true,
+            'autoescape' => "html",
         ));
 
         foreach ((array)Configure::read('twig.extensions') as $ext) {

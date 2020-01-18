@@ -26,7 +26,7 @@ class FilesystemLoader extends \Twig_Loader_Filesystem
         $this->parser = $parser;
     }
 
-    public function findTemplate($template)
+    public function findTemplate($template, $throw = true)
     {
         $logicalName = (string) $template;
 
